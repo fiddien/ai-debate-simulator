@@ -17,7 +17,7 @@ interface FilterMenuProps {
 }
 
 const moralFoundations: (MoralFoundation & { icon: React.ElementType })[] = [
-  { value: "all", label: "All Foundations", icon: Filter },
+  { value: "all", label: "All", icon: Filter },
   { value: "care-harm", label: "Care vs. Harm", icon: Heart },
   { value: "fairness-cheating", label: "Fairness vs. Cheating", icon: Scale },
   { value: "loyalty-betrayal", label: "Loyalty vs. Betrayal", icon: Handshake },
@@ -59,6 +59,7 @@ export default function FilterMenu({
         </CardDescription>
       </CardHeader>
       <CardContent>
+        <h3 className="text-lg font-semibold mb-2">Moral Foundations</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
           {moralFoundations.map((foundation) => {
             const Icon = foundation.icon;

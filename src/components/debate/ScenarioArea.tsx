@@ -67,7 +67,7 @@ export default function ScenarioCard({ scenario }: ScenarioCardProps) {
               )}
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex gap-2">
               <span className="font-medium">Moral Foundations:</span>
               {(scenario.rotMoralFoundations?.length > 0) ? (
                 <div className="flex flex-wrap gap-2">
@@ -85,16 +85,16 @@ export default function ScenarioCard({ scenario }: ScenarioCardProps) {
             <div className="flex gap-6">
               <div>
                 <span className="font-medium">Quality Issues? </span>
-                <span className={`px-2 py-0.5 rounded ${
+                <Badge variant="outline" className={`${
                   scenario.rotBad ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
                 }`}>
                   {scenario.rotBad ? 'Yes' : 'Clear'}
-                </span>
+                </Badge>
               </div>
               <div>
                 <span className="font-medium">Public Agreement: </span>
                 {scenario.rotAgree !== null && scenario.rotAgree !== undefined ? (
-                  <span className={`px-2 py-0.5 rounded ${
+                  <Badge variant="outline" className={`${
                     scenario.rotAgree === 0 ? 'bg-red-100 text-red-700' :
                     scenario.rotAgree === 1 ? 'bg-orange-100 text-orange-700' :
                     scenario.rotAgree === 2 ? 'bg-yellow-100 text-yellow-700' :
@@ -107,7 +107,7 @@ export default function ScenarioCard({ scenario }: ScenarioCardProps) {
                       scenario.rotAgree === 3 ? '75-90%' :
                       '> 99%'
                     }
-                  </span>
+                  </Badge>
                 ) : (
                   <span className="text-gray-500 italic">Not rated</span>
                 )}

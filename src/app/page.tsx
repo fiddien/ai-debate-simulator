@@ -143,18 +143,12 @@ export default function Home() {
       <MainLayout>
         <div className="max-w-4xl mx-auto p-4">
           <ProgressIndicator steps={steps} onStepClick={handleStepClick} />
-          <div id="setup">
-            <SetupArea onSetupComplete={handleSetupComplete} />
-          </div>
 
-          {setupComplete && (
-            <DebateSetupArea
-              unstructuredRounds={unstructuredRounds}
-              structuredRounds={structuredRounds}
-              onChangeUnstructuredRounds={setUnstructuredRounds}
-              onChangeStructuredRounds={setStructuredRounds}
+          <div id="setup">
+            <SetupArea
+              onSetupComplete={handleSetupComplete}
             />
-          )}
+          </div>
 
           {setupComplete && (
             <div className="text-center py-4">
@@ -182,6 +176,16 @@ export default function Home() {
                 />
               </div>
               <div id="debate">
+
+                {setupComplete && (
+                  <DebateSetupArea
+                    unstructuredRounds={unstructuredRounds}
+                    structuredRounds={structuredRounds}
+                    onChangeUnstructuredRounds={setUnstructuredRounds}
+                    onChangeStructuredRounds={setStructuredRounds}
+                  />
+                )}
+
                 <UnstructuredDebateArea
                   messages={debateUnsMessages}
                   setMessages={setDebateUnsMessages}

@@ -54,10 +54,6 @@ const DebateSetupArea: React.FC<DebateSetupAreaProps> = ({
             {/* ...existing or future cost setup code... */}
             Cost calculation settings will go here in future.
           </div>
-
-          <Button variant="default" className="w-full mt-4">
-            Save
-          </Button>
         </div>
       </CardContent>
     </Card>
