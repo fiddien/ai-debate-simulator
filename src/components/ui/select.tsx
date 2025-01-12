@@ -10,8 +10,8 @@ const selectVariants = cva(
     variants: {
       variant: {
         default: "bg-white text-black",
-        outline: "border border-gray-300 hover:bg-teal-100 hover:text-teal-700",
-        ghost: "hover:bg-teal-100 hover:text-teal-700",
+        outline: "border border-gray-300 hover:bg-teal-50 hover:text-teal-700",
+        ghost: "hover:bg-teal-50 hover:text-teal-700",
       },
       size: {
         default: "h-10 px-3 py-2",

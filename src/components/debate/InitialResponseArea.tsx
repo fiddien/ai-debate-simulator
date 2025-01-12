@@ -14,6 +14,7 @@ import MessageComponent from "@/ui/MessageComponent";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import { Loader2, MessageSquare } from "lucide-react";
 import { useRef, useState } from "react";
+import { OverviewTab, OverviewItem } from "@/ui/overview-tab";
 
 interface InitialResponseAreaProps {
   messages: Message[];
@@ -39,12 +40,6 @@ export default function InitialResponseArea({
   const getUniqueModels = () => {
     const models = Object.values(apiSetup.debaterModels);
     return [...new Set(models)].filter(Boolean);
-  };
-
-  const getDebatersByModel = (model: string) => {
-    return Object.entries(apiSetup.debaterModels)
-      .filter(([_, m]) => m === model)
-      .map(([debater]) => debater);
   };
 
   const hasModelResponded = (model: string) => {
@@ -114,6 +109,21 @@ export default function InitialResponseArea({
     cardRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const getOverviewItems = (): OverviewItem[] => {
+    return getUniqueModels()
+      .map((model) => {
+        const response = getModelResponse(model);
+        if (!response) return null;
+        return {
+          id: model,
+          title: model,
+          content: response.content,
+          onClick: () => setActiveTab(model)
+        };
+      })
+      .filter((item): item is OverviewItem => item !== null) as OverviewItem[];
+  };
+
   return (
     <Card className="mb-6" ref={cardRef}>
       <CardHeader>
@@ -146,37 +156,10 @@ export default function InitialResponseArea({
         <Tabs value={activeTab} className="w-full">
           <TabsContent value="overview">
             <div className="p-4 border rounded-lg bg-gray-50">
-              {initialResponses.length === 0 ? (
-                <div className="flex items-center justify-center p-8 text-gray-500">
-                  <MessageSquare className="mr-2" />
-                  Get initial AI perspectives from selected model(s)
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {getUniqueModels().map((model) => {
-                    const response = getModelResponse(model);
-                    return response ? (
-                      <div
-                        key={model}
-                        className="p-4 border rounded-lg bg-white"
-                      >
-                        <h3 className="font-medium mb-2">{model}</h3>
-                        <p className="text-sm text-gray-600 line-clamp-2">
-                          {response.content}
-                        </p>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="mt-2"
-                          onClick={() => setActiveTab(model)}
-                        >
-                          View Full Response →
-                        </Button>
-                      </div>
-                    ) : null;
-                  })}
-                </div>
-              )}
+              <OverviewTab
+                items={getOverviewItems()}
+                emptyMessage="Get initial AI perspectives from selected model(s)"
+              />
             </div>
           </TabsContent>
           {getUniqueModels().map((model) => (

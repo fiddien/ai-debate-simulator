@@ -9,7 +9,7 @@ const textareaVariants = cva(
       variant: {
         default: "border-teal-600 text-teal-700",
         destructive: "border-red-500 text-red-700",
-        outline: "border border-gray-300 hover:bg-teal-100 hover:text-teal-700",
+        outline: "border border-gray-300 hover:bg-teal-50 hover:text-teal-700",
         secondary: "border-teal-300 text-teal-600",
         ghost: "border-none",
         accent: "border-teal-600 text-teal-700",

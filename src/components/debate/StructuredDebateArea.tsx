@@ -15,6 +15,7 @@ import MessageComponent from "@/ui/MessageComponent";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import { Loader2, MessageSquare } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { OverviewTab, OverviewItem } from "@/ui/overview-tab";
 
 const getStageName = (stage: number) => {
   return STAGE_NAMES[stage - 1] || "Debate Completed";
@@ -142,6 +143,34 @@ export default function StructuredDebateArea({
     );
   };
 
+  const getOverviewItems = (): OverviewItem[] => {
+    return Array.from({ length: STAGE_NAMES.length }, (_, i) => i + 1)
+      .map((stage) => {
+        const stageMessages = getMessagesForStage(stage);
+        if (stageMessages.length === 0) return null;
+        return {
+          id: stage.toString(),
+          title: getStageName(stage),
+          content: (
+            <>
+              {stageMessages.map((msg, i) => (
+                <div key={i} className="mb-2">
+                  <p className="text-sm font-medium text-gray-600">
+                    {msg.actor}:
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {msg.content}
+                  </p>
+                </div>
+              ))}
+            </>
+          ),
+          onClick: () => setActiveTab(stage.toString())
+        };
+      })
+      .filter((item): item is OverviewItem => item !== null);
+  };
+
   const canProgress = currentStage < DEBATE_CONFIG.MAX_STAGES;
 
   return (
@@ -176,50 +205,10 @@ export default function StructuredDebateArea({
           <Tabs value={activeTab} className="w-full">
             <TabsContent value="overview">
               <div className="p-4 border rounded-lg bg-gray-50">
-                {getHighestStage() === 1 &&
-                getMessagesForStage(1).length === 0 ? (
-                  <div className="flex items-center justify-center p-8 text-gray-500">
-                    <MessageSquare className="mr-2" />
-                    Start the structured debate by running Stage 1
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {Array.from(
-                      { length: STAGE_NAMES.length },
-                      (_, i) => i + 1
-                    ).map((stage) => {
-                      const stageMessages = getMessagesForStage(stage);
-                      return stageMessages.length > 0 ? (
-                        <div
-                          key={stage}
-                          className="p-4 border rounded-lg bg-white"
-                        >
-                          <h3 className="font-medium mb-2 mt-2">
-                            {getStageName(stage)}
-                          </h3>
-                          {stageMessages.map((msg, i) => (
-                            <div key={i} className="mb-2">
-                              <p className="text-sm font-medium text-gray-600">
-                                {msg.actor}:
-                              </p>
-                              <p className="text-sm text-gray-600 line-clamp-2">
-                                {msg.content}
-                              </p>
-                            </div>
-                          ))}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="mt-2"
-                            onClick={() => setActiveTab(stage.toString())}
-                          >
-                            View Full Stage →
-                          </Button>
-                        </div>
-                      ) : null;
-                    })}
-                  </div>
-                )}
+                <OverviewTab
+                  items={getOverviewItems()}
+                  emptyMessage="Start the structured debate by running Stage 1"
+                />
               </div>
             </TabsContent>
             {Array.from({ length: STAGE_NAMES.length }, (_, i) => i + 1).map(
@@ -251,6 +240,19 @@ export default function StructuredDebateArea({
         </CardContent>
 
         <CardFooter className="flex gap-2 justify-center">
+
+          {activeTab !== "overview" && (
+            <Button
+              variant="outline"
+              onClick={() => {
+                setActiveTab("overview");
+                scrollToTop();
+              }}
+            >
+              ← Back to Overview
+            </Button>
+          )}
+
           {activeTab !== "overview" && currentStage > 1 && (
             <Button
               variant="outline"
