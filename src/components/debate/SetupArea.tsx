@@ -18,20 +18,8 @@ const SetupArea: React.FC<SetupAreaProps> = ({ onSetupComplete }) => {
   const [isInitializing, setIsInitializing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const initialApiKeys: ApiSetup["apiKeys"] = Object.keys(modelOptions).reduce(
-    (acc, key) => {
-      acc[key as keyof ApiSetup["apiKeys"]] = "";
-      return acc;
-    },
-    {} as ApiSetup["apiKeys"]
-  );
-
-  const [apiKeys, setApiKeys] = useState(initialApiKeys);
-  const [debaterModels, setDebaterModels] = useState({
-    debaterA: "",
-    debaterB: "",
-    judge: "",
-  });
+  const [apiKeys, setApiKeys] = useState(defaultApiSetup.apiKeys);
+  const [debaterModels, setDebaterModels] = useState(defaultApiSetup.debaterModels);
 
   const handleApiKeyChange = (provider: string, value: string) => {
     setApiKeys({ ...apiKeys, [provider]: value });
@@ -98,6 +86,7 @@ const SetupArea: React.FC<SetupAreaProps> = ({ onSetupComplete }) => {
               <h4 className="text-lg mb-4">Select Models</h4>
               <div>
                 <Select
+                  value={debaterModels.debaterA}
                   onValueChange={(value) =>
                     handleModelChange("debaterA", value)
                   }
@@ -122,6 +111,7 @@ const SetupArea: React.FC<SetupAreaProps> = ({ onSetupComplete }) => {
               </div>
               <div>
                 <Select
+                  value={debaterModels.debaterB}
                   onValueChange={(value) =>
                     handleModelChange("debaterB", value)
                   }
@@ -146,6 +136,7 @@ const SetupArea: React.FC<SetupAreaProps> = ({ onSetupComplete }) => {
               </div>
               <div>
                 <Select
+                  value={debaterModels.judge}
                   onValueChange={(value) => handleModelChange("judge", value)}
                   required
                 >
