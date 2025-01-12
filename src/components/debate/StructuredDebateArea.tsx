@@ -149,32 +149,30 @@ export default function StructuredDebateArea({
       {/* Structured Debate Card */}
       <Card className="mb-6" ref={cardRef}>
         <CardHeader>
-          <div className="flex justify-between items-center">
             <CardTitle>Structured Debate</CardTitle>
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="ml-auto"
-            >
-              <TabsList>
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                {Array.from(
-                  { length: STAGE_NAMES.length },
-                  (_, i) => i + 1
-                ).map((stage) => (
-                  <TabsTrigger
-                    key={stage}
-                    value={stage.toString()}
-                    disabled={stage > getHighestStage()}
-                  >
-                    Stage {stage}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
-          </div>
         </CardHeader>
         <CardContent>
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="ml-auto"
+          >
+            <TabsList>
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              {Array.from(
+                { length: STAGE_NAMES.length },
+                (_, i) => i + 1
+              ).map((stage) => (
+                <TabsTrigger
+                  key={stage}
+                  value={stage.toString()}
+                  disabled={stage > getHighestStage()}
+                >
+                  Stage {stage}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
           <Tabs value={activeTab} className="w-full">
             <TabsContent value="overview">
               <div className="p-4 border rounded-lg bg-gray-50">
@@ -196,7 +194,7 @@ export default function StructuredDebateArea({
                           key={stage}
                           className="p-4 border rounded-lg bg-white"
                         >
-                          <h3 className="font-medium mb-2">
+                          <h3 className="font-medium mb-2 mt-2">
                             {getStageName(stage)}
                           </h3>
                           {stageMessages.map((msg, i) => (

@@ -117,29 +117,27 @@ export default function InitialResponseArea({
   return (
     <Card className="mb-6" ref={cardRef}>
       <CardHeader>
-        <div className="flex justify-between items-center">
           <CardTitle>Initial AI Responses</CardTitle>
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="ml-auto"
-          >
-            <TabsList className="align-middle">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              {getUniqueModels().map((model) => (
-                <TabsTrigger
-                  key={model}
-                  value={model}
-                  disabled={!hasModelResponded(model)}
-                >
-                  {model}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        </div>
       </CardHeader>
       <CardContent>
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="ml-auto"
+        >
+          <TabsList className="align-middle">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            {getUniqueModels().map((model) => (
+              <TabsTrigger
+                key={model}
+                value={model}
+                disabled={!hasModelResponded(model)}
+              >
+                {model}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
         {error && (
           <div className="mb-4 p-4 border rounded-lg bg-red-50 text-red-600">
             Error: {error}

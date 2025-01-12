@@ -175,7 +175,7 @@ const SetupArea: React.FC<SetupAreaProps> = ({ onSetupComplete }) => {
             type="submit"
             variant="default"
             size="lg"
-            className="w-full accent-button"
+            className="w-full"
             disabled={isInitializing}
           >
             {isInitializing ? "Initializing..." : "Save"}

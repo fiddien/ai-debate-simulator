@@ -66,10 +66,8 @@ export default function FilterMenu({
             return (
               <Button
                 key={foundation.value}
-                variant={isSelected ? "outline" : "default"}
-                className={`flex gap-2 items-center justify-center h-auto py-3 ${
-                  isSelected ? "accent-button" : "accent-outline"
-                }`}
+                variant={isSelected ? "default" : "outline"}
+                className={`flex gap-2 items-center justify-center h-auto py-3`}
                 onClick={() => onFoundationChange(foundation.value)}
               >
                 <Icon size={18} />
@@ -78,7 +76,7 @@ export default function FilterMenu({
             );
           })}
         </div>
-        <Button className="w-full accent-button" onClick={onGetScenario}>
+        <Button className="w-full" onClick={onGetScenario}>
           Get Random Scenario
         </Button>
       </CardContent>

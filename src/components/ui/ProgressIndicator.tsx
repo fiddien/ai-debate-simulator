@@ -11,38 +11,36 @@ interface ProgressIndicatorProps {
 
 const ProgressIndicator = ({ steps, onStepClick }: ProgressIndicatorProps) => {
   return (
-    <div className="sticky top-4 right-4 transform bg-white/95 shadow-lg rounded-lg p-4 border border-gray-200 mb-4">
-      <ul className="flex items-start justify-between relative">
+    <div className="progress-indicator">
+      <ul className="progress-indicator-list">
         {steps.map((step, index) => (
           <li
             key={index}
-            className="flex flex-col items-center relative w-24"
+            className="progress-indicator-item"
             onClick={() => onStepClick(index)}
           >
-            <div className="flex flex-col items-center">
               <div
-                className={`w-4 h-4 rounded-full flex items-center justify-center text-xs font-medium mb-2 cursor-pointer ${
+                className={`progress-indicator-step ${
                   step.isCurrent
-                    ? "bg-teal-600 text-white"
+                    ? "progress-indicator-step-current"
                     : step.isComplete
-                    ? "bg-teal-600 text-white"
-                    : "bg-gray-300 text-white"
+                    ? "progress-indicator-step-complete"
+                    : "progress-indicator-step-incomplete"
                 }`}
               >
                 {index + 1}
               </div>
               <span
-                className={`text-xs text-center ${
+                className={`progress-indicator-text ${
                   step.isCurrent
-                    ? "text-teal-600 font-bold"
+                    ? "progress-indicator-text-current"
                     : step.isComplete
-                    ? "text-gray-600"
-                    : "text-gray-400"
+                    ? "progress-indicator-text-complete"
+                    : "progress-indicator-text-incomplete"
                 }`}
               >
                 {step.name}
               </span>
-            </div>
           </li>
         ))}
       </ul>
