@@ -98,7 +98,7 @@ export const generateJudgePrompt = (
   scenario: JudgeScenario,
   messages: Message[],
 ): PromptMessage[] => {
-  const userMessage = DEBATE_CONFIG.PROMPTS.DEBATE.USER_PROMPT_JUDGE
+  const userMessage = DEBATE_CONFIG.PROMPTS.JUDGEMENT.USER_PROMPT_JUDGE
     .replace("{question}", scenario.question)
     .replace("{answer_a}", scenario.answer_a)
     .replace("{answer_b}", scenario.answer_b)
@@ -107,7 +107,7 @@ export const generateJudgePrompt = (
     .replace("{transcript}", formatDebateHistory(messages)).trim();
 
   return [
-    { "role": "system", "content": DEBATE_CONFIG.PROMPTS.SYSTEM_PROMPT_JUDGE.trim() },
+    { "role": "system", "content": DEBATE_CONFIG.PROMPTS.JUDGEMENT.SYSTEM_PROMPT_JUDGE.trim() },
     { "role": "user", "content": userMessage.trim() }
   ];
 };

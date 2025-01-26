@@ -1,3 +1,5 @@
+'use client';
+
 import { apiPlaceholder, modelOptions } from "@/constants/setupConstants";
 import { defaultApiSetup } from "@/constants/setupConstantsTemp";
 import { useClient } from "@/context/ClientContext";

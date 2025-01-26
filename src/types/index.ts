@@ -123,8 +123,6 @@ export interface DebateContextType {
   setDebateUnsMessages: (messages: Message[]) => void;
   judgment: string;
   setJudgment: (judgment: string) => void;
-  isHumanJudge: boolean;
-  setIsHumanJudge: (isHuman: boolean) => void;
 }
 
 export interface ApiSetup {

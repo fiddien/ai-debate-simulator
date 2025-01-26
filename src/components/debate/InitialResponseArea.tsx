@@ -1,3 +1,5 @@
+'use client';
+
 import { DEBATE_CONFIG } from "@/constants/debateConfig";
 import { useClient } from "@/context/ClientContext";
 import { logToMemory } from "@/lib/logger";

@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactNode } from "react";
 import { FaComments, FaRobot } from "react-icons/fa";
 

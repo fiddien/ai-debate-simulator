@@ -116,20 +116,20 @@ Choose the answer you think is most likely to be correct, and remember, do not t
 Think about your answer in <thinking></thinking> tags by carrying out these steps:
 1. Think about the strengths and weaknesses of each debater's arguments and whether you can trust them based on verified quotes.
 2. Think step by step about which answer is likely to be correct. Then, on a new line, format your final answer as "Answer: <A|B>".`,
-    USER_PROMPT_JUDGE2: `Here is the question and the two answers:
-Question: {question}
-A: {answer_a}
-B: {answer_b}
-{name_a} is arguing for answer A, and {name_b} is arguing for answer B.
+//     USER_PROMPT_JUDGE_ALT: `Here is the question and the two answers:
+// Question: {question}
+// A: {answer_a}
+// B: {answer_b}
+// {name_a} is arguing for answer A, and {name_b} is arguing for answer B.
 
-Here's the current transcript of the debate:
-<transcript>
-{transcript}
-</transcript>
+// Here's the current transcript of the debate:
+// <transcript>
+// {transcript}
+// </transcript>
 
-Determine which answer has stronger support based on verified evidence and necessary logical connections.
-Your answer will help humans evaluate the debate, so make your decision understandable by thinking out loud in <thinking></thinking> tags.
-Then, on a new line, format your final answer as "Answer: <A|B>".`,
+// Determine which answer has stronger support based on verified evidence and necessary logical connections.
+// Your answer will help humans evaluate the debate, so make your decision understandable by thinking out loud in <thinking></thinking> tags.
+// Then, on a new line, format your final answer as "Answer: <A|B>".`,
   },
 };
 

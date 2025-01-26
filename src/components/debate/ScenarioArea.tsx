@@ -1,3 +1,5 @@
+'use client';
+
 import { DebateScenario } from "@/types";
 import { Badge } from "@/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
@@ -64,9 +66,6 @@ export default function ScenarioCard({ scenario }: ScenarioCardProps) {
             </div>
           </div>
         </div>
-
-        <div className="h-px bg-gray-200" />
-
       </CardContent>
     </Card>
   );

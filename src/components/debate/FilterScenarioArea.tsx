@@ -1,3 +1,5 @@
+'use client';
+
 import { getFilteredScenarios } from "@/lib/data";
 import { Button } from "@/ui/button";
 import {
@@ -103,7 +105,7 @@ export default function FilterMenu({
             </Button>
           ))}
         </div>
-        <Button className="w-full my-2 flex gap-2 items-center justify-center" onClick={onGetScenario}>
+        <Button className="w-full mt-4 flex gap-2 items-center justify-center" onClick={onGetScenario}>
           <Shuffle className="w-4 h-4" />
           Get Random Scenario        </Button>
       </CardContent>

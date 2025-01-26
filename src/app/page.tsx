@@ -28,8 +28,6 @@ export default function Home() {
     setDebateUnsMessages,
     judgment,
     setJudgment,
-    isHumanJudge,
-    setIsHumanJudge,
   } = useDebate();
 
   const [selectedLevel, setSelectedLevel] = useState<string>("LowConflict");
@@ -63,12 +61,10 @@ export default function Home() {
       scenario: currentScenario,
       messages,
       judgment,
-      isHumanJudge,
     });
   };
 
   const handleSetupComplete = (setup: ApiSetup) => {
-    // log the setup
     console.log("Setup complete:", setup);
     setApiSetup(setup);
     setSetupComplete(true);
@@ -169,11 +165,10 @@ export default function Home() {
                   apiSetup={apiSetup}
                 />
                 <JudgmentArea
-                  isHumanJudge={isHumanJudge}
-                  setIsHumanJudge={setIsHumanJudge}
                   judgment={judgment}
                   setJudgment={setJudgment}
                   onSubmit={handleSubmitJudgment}
+                  apiSetup={apiSetup}
                 />
               </div>
             </>

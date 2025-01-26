@@ -1,3 +1,5 @@
+'use client';
+
 import { DEBATE_CONFIG } from "@/constants/debateConfig";
 import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";

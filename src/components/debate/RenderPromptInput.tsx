@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from "@/ui/button";
 import { Save } from "lucide-react";
 import React, { useState } from "react";
