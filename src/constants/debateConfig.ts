@@ -140,4 +140,4 @@ export const DEBATE_CONFIG = {
   NUM_ROUNDS: 3,
   WORD_LIMIT: 150,
   PROMPTS: PROMPTS,
-} as const;
+};

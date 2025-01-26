@@ -4,7 +4,7 @@ import { DEBATE_CONFIG } from "@/constants/debateConfig";
 import { useClient } from "@/context/ClientContext";
 import { generateDebaterPrompt } from "@/lib/promptGenerator";
 import { extractArguments, validateCitations } from "@/lib/utils";
-import { DebateAreaProps } from "@/types";
+import { DebateAreaProps, Message } from "@/types";
 import { Button } from "@/ui/button";
 import {
   Card,
@@ -40,6 +40,7 @@ export default function StructuredDebateArea({
   const [prompts, setPrompts] = useState(DEBATE_CONFIG.PROMPTS.DEBATE);
   const latestMessagesRef = React.useRef(messages);
   const [maxRounds, setMaxRounds] = useState(DEBATE_CONFIG.NUM_ROUNDS);
+
 
   // Update ref when messages change
   useEffect(() => {
@@ -106,6 +107,7 @@ export default function StructuredDebateArea({
         round: currentRound,
         name: name,
         content: messageContent,
+        content_thinking: "",
         content_argument: contentArgument,
         side: name === "A" ? "left" : "right",
       };
@@ -121,12 +123,12 @@ export default function StructuredDebateArea({
       const responseA = await generateDebaterResponse("A", "debaterA");
       if (responseA) {
         await new Promise<void>((resolve) => {
-          setMessages(prev => {
-            const newMessages = [...prev, responseA];
+            setMessages((prev: Message[]) => {
+            const newMessages = [...prev, responseA as Message];
             latestMessagesRef.current = newMessages; // Update ref immediately
             resolve();
             return newMessages;
-          });
+            });
         });
 
         // Small delay to ensure state has propagated
@@ -134,8 +136,8 @@ export default function StructuredDebateArea({
 
         const responseB = await generateDebaterResponse("B", "debaterB");
         if (responseB) {
-          setMessages(prev => {
-            const newMessages = [...prev, responseB];
+          setMessages((prev: Message[]) => {
+            const newMessages = [...prev, responseB as Message];
             latestMessagesRef.current = newMessages; // Update ref immediately
             return newMessages;
           });
@@ -174,7 +176,7 @@ export default function StructuredDebateArea({
   };
 
   const getOverviewItems = (): OverviewItem[] => {
-    return Array.from({ length: maxRounds }, (_, i) => i + 1)
+    const overviewItems: (OverviewItem | null)[] = Array.from({ length: maxRounds }, (_, i) => i + 1)
       .map((round) => {
         const roundMessages = getMessagesForRound(round);
         if (roundMessages.length === 0) return null;
@@ -198,7 +200,10 @@ export default function StructuredDebateArea({
           onClick: () => setActiveTab(round.toString())
         };
       })
-      .filter((item): item is OverviewItem => item !== null);
+      const filtered = overviewItems.filter(
+        (item): item is OverviewItem => item !== null
+      ) as OverviewItem[]
+      return filtered;
   };
 
   const handlePromptChange = (key: string, value: string | Record<number, string>) => {
@@ -217,7 +222,7 @@ export default function StructuredDebateArea({
           <div className="flex items-center gap-4 mt-4">
             <span className="text-sm">Max Rounds:</span>
             <Slider
-              defaultValue={[maxRounds]}
+              defaultValue={[maxRounds.toString()]}
               min={1}
               max={DEBATE_CONFIG.MAX_ROUNDS}
               step={1}

@@ -3,7 +3,7 @@ import { Message } from "@/types";
 import { Button } from "@/ui/button";
 import { useState } from "react";
 import { FaCheck, FaChevronDown, FaChevronRight, FaCopy } from "react-icons/fa";
-import ReactMarkdown from "react-markdown";
+import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks';
 
 const processContent = (content: string) => {
@@ -13,10 +13,12 @@ const processContent = (content: string) => {
     if (section.startsWith('<thinking>')) {
       const thinkingContent = section.replace(/<\/?thinking>/g, '');
 
-      // Convert to markdown syntax
+      // Add == around quote tags instead of replacing them
       const processedContent = thinkingContent
-        .replace(/<v_quote>(.*?)<\/v_quote>/g, (_, quote) => `**${quote}**`)
-        .replace(/<u_quote>(.*?)<\/u_quote>/g, (_, quote) => `***${quote}***`);
+        .replace(/<v_quote>/g, '`<v_quote>')
+        .replace(/<\/v_quote>/g, '</v_quote>`')
+        .replace(/<u_quote>/g, '`<u_quote>')
+        .replace(/<\/u_quote>/g, '</u_quote>`');
 
       return {
         type: 'thinking',
@@ -24,8 +26,10 @@ const processContent = (content: string) => {
       };
     } else {
       const processedContent = section
-        .replace(/<v_quote>(.*?)<\/v_quote>/g, (_, quote) => `**${quote}**`)
-        .replace(/<u_quote>(.*?)<\/u_quote>/g, (_, quote) => `~~${quote}~~`);
+        .replace(/<v_quote>/g, '`<v_quote>')
+        .replace(/<\/v_quote>/g, '</v_quote>`')
+        .replace(/<u_quote>/g, '`<u_quote>')
+        .replace(/<\/u_quote>/g, '</u_quote>`');
       const args = extractArguments(processedContent);
 
       return {
@@ -40,27 +44,30 @@ const ThinkingSection = ({ content }: { content: string }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
+    <div>
+    <Button
+      onClick={() => setIsExpanded(!isExpanded)}
+      className="w-full gap-2 hover:bg-white"
+      variant="ghost"
+    >
+      {isExpanded ? <FaChevronDown size={12} /> : <FaChevronRight size={12} />}
+      Thinking Process
+    </Button>
     <article className="prose prose-md max-w-none">
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="flex items-center gap-2 text-gray-400 hover:text-gray-800 font-medium"
-      >
-        {isExpanded ? <FaChevronDown size={12} /> : <FaChevronRight size={12} />}
-        Thinking Process
-      </button>
-      <div className={`${isExpanded ? 'block' : 'hidden'} border-2 px-2 border-gray-300 rounded-md`}>
-        <ReactMarkdown
+      <div className={`${isExpanded ? 'block' : 'hidden'} px-2 bg-white rounded-md`}>
+        <Markdown
           remarkPlugins={[remarkBreaks]}
           components={{
-            del: ({ children }) => (
-              <span className="bg-red-100 text-green-900 px-1 rounded">{children}</span>
+            code: ({ children }) => (
+              <span className="bg-white px-1 rounded">{children}</span>
             ),
           }}
         >
           {content}
-        </ReactMarkdown>
+        </Markdown>
       </div>
     </article>
+    </div>
   );
 };
 
@@ -101,16 +108,16 @@ export const MessageComponent = ({ content, side, name, ...props }: MessageCompo
             section.type === 'thinking'
               ? <ThinkingSection key={index} content={section.content} />
               : <article key={index} className="prose prose-md max-w-none">
-                <ReactMarkdown
+                <Markdown
                   remarkPlugins={[remarkBreaks]}
                   components={{
-                    del: ({ children }) => (
-                      <span className="bg-green-100 text-green-900 px-1 rounded">{children}</span>
+                    code: ({ children }) => (
+                      <span className="bg-white px-1 rounded">{children}</span>
                     ),
                   }}
                 >
                   {section.content}
-                </ReactMarkdown>
+                </Markdown>
               </article>
           ))}
         </div>

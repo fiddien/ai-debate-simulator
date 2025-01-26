@@ -106,7 +106,7 @@ export interface Scenario {
 
   export interface DebateAreaProps {
     messages: Message[];
-    setMessages: (messages: Message[]) => void;
+    setMessages: (messages: Message[] | ((prev: Message[]) => Message[])) => void;
     debateScenario: DebateScenario;
     apiSetup: ApiSetup;
     rounds?: number;
