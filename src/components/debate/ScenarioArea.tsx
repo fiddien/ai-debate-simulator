@@ -25,7 +25,22 @@ const highlightText = (text: string) => {
   return highlightedText;
 };
 
+const getDebateSettings = (label: string) => {
+  switch (label.toLowerCase()) {
+    case 'proved':
+      return { A: 'proved', B: 'disproved' };
+    case 'disproved':
+      return { A: 'disproved', B: 'unknown' };
+    case 'unknown':
+      return { A: 'unknown', B: 'proved' };
+    default:
+      return { A: 'unknown', B: 'unknown' };
+  }
+};
+
 export default function ScenarioCard({ scenario }: ScenarioCardProps) {
+  const debateSettings = getDebateSettings(scenario.label);
+
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -65,6 +80,17 @@ export default function ScenarioCard({ scenario }: ScenarioCardProps) {
               </Badge>
             </div>
           </div>
+        </div>
+
+        {/* Debate Settings Section */}
+        <div className="flex gap-4">
+          <span className="font-medium">Debate Settings:</span>
+          <Badge variant="outline">
+            A: {debateSettings.A}
+          </Badge>
+          <Badge variant="outline">
+            B: {debateSettings.B}
+          </Badge>
         </div>
       </CardContent>
     </Card>

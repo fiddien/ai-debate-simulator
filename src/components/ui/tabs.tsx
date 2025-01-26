@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import * as React from "react";
+import { PenBoxIcon } from "lucide-react";
 
 const Tabs = TabsPrimitive.Root;
 
@@ -22,15 +23,19 @@ TabsList.displayName = TabsPrimitive.List.displayName;
 const TabsTrigger = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, ...props }, ref) => (
+>(({ className, children, value, ...props }, ref) => (
   <TabsPrimitive.Trigger
     ref={ref}
+    value={value}
     className={cn(
-      "inline-flex items-center justify-start sm:justify-center whitespace-normal sm:whitespace-nowrap rounded-md px-3 py-2 sm:px-2 sm:py-1 text-[11px] leading-tight sm:text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-gray-500 data-[state=active]:text-white data-[state=active]:shadow-sm hover:bg-teal-50 hover:text-teal-700",
+      "inline-flex items-center justify-start sm:justify-center whitespace-normal sm:whitespace-nowrap rounded-md px-3 py-2 sm:px-2 sm:py-1 text-[11px] leading-tight sm:text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-gray-500 data-[state=active]:text-white data-[state=active]:shadow-sm hover:bg-teal-50 hover:text-teal-700 gap-1",
       className
     )}
     {...props}
-  />
+  >
+    {value === "edit-prompts" && <PenBoxIcon size={16} />}
+    {children}
+  </TabsPrimitive.Trigger>
 ));
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 

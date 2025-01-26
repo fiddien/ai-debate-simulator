@@ -20,23 +20,23 @@ import { useRef, useState } from "react";
 import RenderPromptInput from "./RenderPromptInput";
 import { ApiSetup } from "@/types";
 
-interface JudgmentAreaProps {
+interface JudgementAreaProps {
   judgement: string;
-  setJudgment: (judgement: string) => void;
+  setJudgement: (judgement: string) => void;
   onSubmit: () => void;
   apiSetup: ApiSetup;
 }
 
-export default function JudgmentArea({
+export default function JudgementArea({
   judgement,
-  setJudgment,
+  setJudgement,
   onSubmit,
   apiSetup,
-}: JudgmentAreaProps) {
+}: JudgementAreaProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const { clientManager } = useClient();
   const { currentScenario, debateMessages } = useDebate();
-  const [generatingJudgment, setGeneratingJudgment] = useState(false);
+  const [generatingJudgement, setGeneratingJudgement] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("judgement");
   const [prompts, setPrompts] = useState(DEBATE_CONFIG.PROMPTS.JUDGEMENT);
@@ -54,8 +54,8 @@ export default function JudgmentArea({
     }));
   };
 
-  const generateJudgment = async () => {
-    setGeneratingJudgment(true);
+  const generateJudgement = async () => {
+    setGeneratingJudgement(true);
     setError(null);
 
     try {
@@ -75,14 +75,14 @@ export default function JudgmentArea({
       );
 
       logToMemory(`Judge response received:\n${response}`);
-      setJudgment(response);
+      setJudgement(response);
       onSubmit();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
       setError(errorMessage);
       console.error("Error generating judgement:", error);
     } finally {
-      setGeneratingJudgment(false);
+      setGeneratingJudgement(false);
     }
   };
 
@@ -94,7 +94,7 @@ export default function JudgmentArea({
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
-            <TabsTrigger value="judgement">Judgment</TabsTrigger>
+            <TabsTrigger value="judgement">Judgement</TabsTrigger>
             <TabsTrigger value="edit-prompts">Edit Prompts</TabsTrigger>
           </TabsList>
 
@@ -143,16 +143,16 @@ export default function JudgmentArea({
       <CardFooter className="flex justify-center gap-2">
         <Button
           variant="default"
-          disabled={generatingJudgment || !debateMessages.length}
-          onClick={generateJudgment}
+          disabled={generatingJudgement || !debateMessages.length}
+          onClick={generateJudgement}
         >
-          {generatingJudgment ? (
+          {generatingJudgement ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Generating Judgment...
+              Generating Judgement...
             </>
           ) : (
-            "Generate AI Judgment"
+            "Generate AI Judgement"
           )}
         </Button>
       </CardFooter>

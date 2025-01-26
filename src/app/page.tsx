@@ -2,7 +2,7 @@
 
 import FilterMenu from "@/components/debate/FilterScenarioArea";
 import InitialResponseArea from "@/components/debate/InitialResponseArea";
-import JudgmentArea from "@/components/debate/JudgementArea";
+import JudgementArea from "@/components/debate/JudgementArea";
 import ScenarioCard from "@/components/debate/ScenarioArea";
 import SetupArea from "@/components/debate/SetupArea";
 import StructuredDebateArea from "@/components/debate/StructuredDebateArea";
@@ -26,8 +26,8 @@ export default function Home() {
     setDebateMessages,
     debateUnsMessages,
     setDebateUnsMessages,
-    judgment,
-    setJudgment,
+    judgement,
+    setJudgement,
   } = useDebate();
 
   const [selectedLevel, setSelectedLevel] = useState<string>("LowConflict");
@@ -49,18 +49,18 @@ export default function Home() {
     if (scenario) {
       setCurrentScenario(scenario);
       setDebateMessages([]);
-      setJudgment("");
+      setJudgement("");
     } else {
       console.warn(`No scenarios found for level:${selectedLevel}, label:${selectedLabel}`);
     }
   };
 
-  const handleSubmitJudgment = () => {
-    // Implement judgment submission logic
-    console.log("Submitting judgment:", {
+  const handleSubmitJudgement = () => {
+    // Implement judgement submission logic
+    console.log("Submitting judgement:", {
       scenario: currentScenario,
       messages,
-      judgment,
+      judgement,
     });
   };
 
@@ -79,7 +79,7 @@ export default function Home() {
     { name: "Select Scenario" },
     { name: "Initial Response" },
     { name: "Models Debate" },
-    { name: "Give Judgment" },
+    { name: "Give Judgement" },
   ];
 
   const handleStepClick = (stepIndex: number) => {
@@ -139,10 +139,10 @@ export default function Home() {
                 />
               </div>
               <div id="judgement">
-                <JudgmentArea
-                  judgment={judgment}
-                  setJudgment={setJudgment}
-                  onSubmit={handleSubmitJudgment}
+                <JudgementArea
+                  judgement={judgement}
+                  setJudgement={setJudgement}
+                  onSubmit={handleSubmitJudgement}
                   apiSetup={apiSetup}
                 />
               </div>

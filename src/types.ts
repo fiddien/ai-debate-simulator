@@ -8,9 +8,9 @@ export interface Scenario {
     rotMoralFoundations: string[];
     rotAgree: number;
     rotBad: number;
-    rotJudgment: string;
+    rotJudgement: string;
     action: string;
-    actionMoralJudgment: number;
+    actionMoralJudgement: number;
     actionAgree: number;
   }
 
@@ -121,8 +121,8 @@ export interface Scenario {
     setDebateMessages: (messages: Message[]) => void;
     debateUnsMessages: Message[];
     setDebateUnsMessages: (messages: Message[]) => void;
-    judgment: string;
-    setJudgment: (judgment: string) => void;
+    judgement: string;
+    setJudgement: (judgement: string) => void;
   }
 
   export interface ApiSetup {
