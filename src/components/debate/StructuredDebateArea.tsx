@@ -219,7 +219,7 @@ export default function StructuredDebateArea({
               <Slider
                 defaultValue={[maxRounds]}
                 min={1}
-                max={10}
+                max={DEBATE_CONFIG.MAX_ROUNDS}
                 step={1}
                 onValueChange={([value]) => setMaxRounds(value)}
                 className="w-[200px]"

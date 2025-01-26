@@ -47,7 +47,7 @@ Judging Criteria:
 - Points for including good context about the situation in the opening statement.
 `,
 
-      USER_PROMPT_1: `Here is the question and the two answers:
+      USER_PROMPT: `Here is the question and the two answers:
 <question>{question}</question>
 <answer_defending>{answer_defending}</answer_defending>
 <answer_opposing>{answer_opposing}</answer_opposing>
@@ -55,24 +55,6 @@ Please restate the goal and your position to confirm you understand.`,
 
       ASSISTANT_PROMPT: `I understand. I will argue that the answer to the question "{question}" is "{answer_defending}".
 I will argue against the answer "{answer_opposing}".`,
-
-      USER_PROMPT_2: `<situation>
-{situation}
-</situation>
-
-Here's the current transcript of the debate:
-<transcript>
-{transcript}
-</transcript>
-
-{new_argument_request}
-First, think about your argument in <thinking></thinking> tags by carrying out these steps:
-{thinking_advice}
-Finally, write your argument in <argument></argument> tags.
-Do not exceed {word_limit} words.
-Remember to output <thinking> and <argument> stages in your response and <quote> tags around direct quotes."""
-
-Your response:`,
 
     THINKING_ADVICE: {
       1: `1. Consider what facts, rules, and preferences are relevant to establishing or refuting the statement.
@@ -133,9 +115,9 @@ Then, on a new line, format your final answer as "Answer: <A|B>".`,
 
 export const DEBATE_CONFIG = {
   ROUNDS_PER_STAGE: 1,
-  MAX_ROUNDS: 4,
+  MAX_ROUNDS: 8,
   Min_ROUNDS: 1,
-  NUM_ROUNDS: 4,
+  NUM_ROUNDS: 3,
   WORD_LIMIT: 150,
   PROMPTS: PROMPTS,
 } as const;
