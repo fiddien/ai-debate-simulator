@@ -1,7 +1,8 @@
 import { DEBATE_CONFIG } from "@/constants/debateConfig";
 import { useClient } from "@/context/ClientContext";
 import { generateDebaterPrompt } from "@/lib/promptGenerator";
-import { DebateAreaProps, Message } from "@/types";
+import { extractArguments, validateCitations } from "@/lib/utils";
+import { DebateAreaProps } from "@/types";
 import { Button } from "@/ui/button";
 import {
   Card,
@@ -11,13 +12,12 @@ import {
   CardTitle,
 } from "@/ui/card";
 import MessageComponent from "@/ui/MessageComponent";
+import { OverviewItem, OverviewTab } from "@/ui/overview-tab";
+import { Slider } from "@/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import { Loader2, MessageSquare } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { OverviewTab, OverviewItem } from "@/ui/overview-tab";
 import RenderPromptInput from "./RenderPromptInput";
-import { validateCitations, extractArguments } from "@/lib/utils";
-import { Slider } from "@/ui/slider";
 
 const getRoundName = (round: number) => {
   return `Round ${round}`;
@@ -213,19 +213,19 @@ export default function StructuredDebateArea({
       {/* Structured Debate Card */}
       <Card className="mb-6" ref={cardRef}>
         <CardHeader>
-            <CardTitle>Structured Debate</CardTitle>
-            <div className="flex items-center gap-4 mt-4">
-              <span className="text-sm">Max Rounds:</span>
-              <Slider
-                defaultValue={[maxRounds]}
-                min={1}
-                max={DEBATE_CONFIG.MAX_ROUNDS}
-                step={1}
-                onValueChange={([value]) => setMaxRounds(value)}
-                className="w-[200px]"
-              />
-              <span className="text-sm">{maxRounds}</span>
-            </div>
+          <CardTitle>Structured Debate</CardTitle>
+          <div className="flex items-center gap-4 mt-4">
+            <span className="text-sm">Max Rounds:</span>
+            <Slider
+              defaultValue={[maxRounds]}
+              min={1}
+              max={DEBATE_CONFIG.MAX_ROUNDS}
+              step={1}
+              onValueChange={([value]) => setMaxRounds(value)}
+              className="w-[200px]"
+            />
+            <span className="text-sm">{maxRounds}</span>
+          </div>
         </CardHeader>
         <CardContent>
           <Tabs

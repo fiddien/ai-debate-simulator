@@ -28,7 +28,7 @@ const selectVariants = cva(
 
 export interface SelectProps
   extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>,
-    VariantProps<typeof selectVariants> {
+  VariantProps<typeof selectVariants> {
   label?: string;
 }
 
@@ -70,7 +70,7 @@ const SelectContent = React.forwardRef<
       className={cn(
         "relative z-50 min-w-[8rem] overflow-hidden rounded-md border bg-white text-black shadow-md",
         name === "popper" &&
-          "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
+        "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
         className
       )}
       name={name}
@@ -80,7 +80,7 @@ const SelectContent = React.forwardRef<
         className={cn(
           "p-1 max-h-[300px] overflow-y-auto relative",
           name === "popper" &&
-            "w-full min-w-[var(--radix-select-trigger-width)]"
+          "w-full min-w-[var(--radix-select-trigger-width)]"
         )}
       >
         {children}

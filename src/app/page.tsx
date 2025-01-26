@@ -6,16 +6,15 @@ import JudgmentArea from "@/components/debate/JudgementArea";
 import ScenarioCard from "@/components/debate/ScenarioArea";
 import SetupArea from "@/components/debate/SetupArea";
 import StructuredDebateArea from "@/components/debate/StructuredDebateArea";
-import UnstructuredDebateArea from "@/components/debate/UnstructuredDebateArea";
 import MainLayout from "@/components/layout/MainLayout";
 import ProgressIndicator from "@/components/ui/ProgressIndicator";
+import { DEBATE_CONFIG } from "@/constants/debateConfig";
 import { defaultApiSetup } from "@/constants/setupConstants";
 import { ClientProvider } from "@/context/ClientContext";
 import { useDebate } from "@/context/DebateContext";
 import { getRandomScenario } from "@/lib/data";
 import { ApiSetup } from "@/types";
 import { useEffect, useState } from "react";
-import { DEBATE_CONFIG } from "@/constants/debateConfig";
 
 export default function Home() {
   const {

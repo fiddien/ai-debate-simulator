@@ -1,7 +1,7 @@
 import { apiPlaceholder, modelOptions } from "@/constants/setupConstants";
 import { defaultApiSetup } from "@/constants/setupConstantsTemp";
 import { useClient } from "@/context/ClientContext";
-import { ApiSetup, SetupAreaProps } from "@/types";
+import { SetupAreaProps } from "@/types";
 import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import Input from "@/ui/input";

@@ -46,7 +46,7 @@ export default function ScenarioCard({ scenario }: ScenarioCardProps) {
           <div>
             <span className="font-medium">Question: </span>
             <span className="bg-teal-100 px-2 py-1 rounded">
-            {scenario.question}
+              {scenario.question}
             </span>
           </div>
 

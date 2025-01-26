@@ -1,3 +1,4 @@
+import { DEBATE_CONFIG } from "@/constants/debateConfig";
 import { useClient } from "@/context/ClientContext";
 import { logToMemory } from "@/lib/logger";
 import { generateBaselinePrompt } from "@/lib/promptGenerator";
@@ -11,11 +12,10 @@ import {
   CardTitle,
 } from "@/ui/card";
 import MessageComponent from "@/ui/MessageComponent";
+import { OverviewItem, OverviewTab } from "@/ui/overview-tab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
-import { Loader2, MessageSquare } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useRef, useState } from "react";
-import { OverviewTab, OverviewItem } from "@/ui/overview-tab";
-import { DEBATE_CONFIG } from "@/constants/debateConfig";
 import RenderPromptInput from "./RenderPromptInput";
 
 interface InitialResponseAreaProps {
@@ -127,7 +127,7 @@ export default function InitialResponseArea({
   return (
     <Card className="mb-6" ref={cardRef}>
       <CardHeader>
-          <CardTitle>Initial AI Responses</CardTitle>
+        <CardTitle>Initial AI Responses</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs

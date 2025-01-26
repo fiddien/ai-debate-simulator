@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
-import Input from "@/ui/input";
 import { DEBATE_CONFIG } from "@/constants/debateConfig";
 import { Button } from "@/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
+import Input from "@/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
+import React, { useState } from "react";
 
 interface DebateSetupAreaProps {
   unstructuredRounds: number;

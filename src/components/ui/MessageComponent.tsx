@@ -1,10 +1,10 @@
+import { extractArguments } from "@/lib/utils";
 import { Message } from "@/types";
 import { Button } from "@/ui/button";
 import { useState } from "react";
-import { FaCheck, FaCopy, FaRobot, FaUser, FaChevronDown, FaChevronRight } from "react-icons/fa";
+import { FaCheck, FaChevronDown, FaChevronRight, FaCopy } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from 'remark-breaks';
-import { extractArguments } from "@/lib/utils";
 
 const processContent = (content: string) => {
   const thinkingSections = content.split(/(<thinking>[\s\S]*?<\/thinking>)/g);
@@ -52,7 +52,7 @@ const ThinkingSection = ({ content }: { content: string }) => {
         <ReactMarkdown
           remarkPlugins={[remarkBreaks]}
           components={{
-            del: ({children}) => (
+            del: ({ children }) => (
               <span className="bg-red-100 text-green-900 px-1 rounded">{children}</span>
             ),
           }}
@@ -78,11 +78,10 @@ export const MessageComponent = ({ content, side, model, name }: Message) => {
     <div className={`flex gap-3 mb-4`}>
       {/* Chat bubble */}
       <div className={`flex-1 w-full`}>
-        <div className={`rounded-lg px-4 py-2 ${
-          side === "right"
+        <div className={`rounded-lg px-4 py-2 ${side === "right"
             ? "bg-amber-50 border border-amber-100"
             : "bg-teal-50 border border-teal-100"
-        }`}>
+          }`}>
           {/* Avatar and Name container */}
           <div className="flex items-center gap-3 mb-2">
             <div className={`px-4 h-10 rounded-full flex items-center justify-center font-bold
@@ -92,22 +91,22 @@ export const MessageComponent = ({ content, side, model, name }: Message) => {
             </div>
           </div>
           {/* Response */}
-            {processedSections.map((section, index) => (
-              section.type === 'thinking'
-                ? <ThinkingSection key={index} content={section.content} />
-                : <article key={index} className="prose prose-md max-w-none">
-                    <ReactMarkdown
-                    remarkPlugins={[remarkBreaks]}
-                    components={{
-                      del: ({children}) => (
-                        <span className="bg-green-100 text-green-900 px-1 rounded">{children}</span>
-                      ),
-                    }}
-                  >
-                    {section.content}
-                  </ReactMarkdown>
-                </article>
-            ))}
+          {processedSections.map((section, index) => (
+            section.type === 'thinking'
+              ? <ThinkingSection key={index} content={section.content} />
+              : <article key={index} className="prose prose-md max-w-none">
+                <ReactMarkdown
+                  remarkPlugins={[remarkBreaks]}
+                  components={{
+                    del: ({ children }) => (
+                      <span className="bg-green-100 text-green-900 px-1 rounded">{children}</span>
+                    ),
+                  }}
+                >
+                  {section.content}
+                </ReactMarkdown>
+              </article>
+          ))}
         </div>
         {/* Copy button */}
         <div className="flex justify-end my-2">

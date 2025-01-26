@@ -47,13 +47,13 @@ Judging Criteria:
 - Points for including good context about the situation in the opening statement.
 `,
 
-      USER_PROMPT: `Here is the question and the two answers:
+    USER_PROMPT: `Here is the question and the two answers:
 <question>{question}</question>
 <answer_defending>{answer_defending}</answer_defending>
 <answer_opposing>{answer_opposing}</answer_opposing>
 Please restate the goal and your position to confirm you understand.`,
 
-      ASSISTANT_PROMPT: `I understand. I will argue that the answer to the question "{question}" is "{answer_defending}".
+    ASSISTANT_PROMPT: `I understand. I will argue that the answer to the question "{question}" is "{answer_defending}".
 I will argue against the answer "{answer_opposing}".`,
 
     THINKING_ADVICE: {
