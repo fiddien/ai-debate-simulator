@@ -180,30 +180,34 @@ export default function StructuredDebateArea({
       .map((round) => {
         const roundMessages = getMessagesForRound(round);
         if (roundMessages.length === 0) return null;
+
+        const debaterA = roundMessages.find(msg => msg.name === "A");
+        const debaterB = roundMessages.find(msg => msg.name === "B");
+
         return {
           id: round.toString(),
           title: getRoundName(round),
           content: (
-            <>
-              {roundMessages.map((msg, i) => (
-                <div key={i} className="mb-2">
-                  <p className="text-sm font-medium text-gray-600">
-                    {msg.name}:
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    {msg.content}
-                  </p>
+            <div className="space-y-2">
+              {debaterA && (
+                <div className="p-2 rounded bg-teal-50/50">
+                  <span className="font-medium text-teal-700">Debater A: </span>
+                  <span className="text-gray-600 line-clamp-2">{debaterA.content}</span>
                 </div>
-              ))}
-            </>
+              )}
+              {debaterB && (
+                <div className="p-2 rounded bg-amber-50/50">
+                  <span className="font-medium text-amber-700">Debater B: </span>
+                  <span className="text-gray-600 line-clamp-2">{debaterB.content}</span>
+                </div>
+              )}
+            </div>
           ),
           onClick: () => setActiveTab(round.toString())
         };
-      })
-      const filtered = overviewItems.filter(
-        (item): item is OverviewItem => item !== null
-      ) as OverviewItem[]
-      return filtered;
+      });
+
+    return overviewItems.filter((item): item is OverviewItem => item !== null);
   };
 
   const handlePromptChange = (key: string, value: string | Record<number, string>) => {
@@ -219,7 +223,10 @@ export default function StructuredDebateArea({
       <Card className="mb-6" ref={cardRef}>
         <CardHeader>
           <CardTitle>AI Debate</CardTitle>
-          <div className="flex items-center gap-4 mt-4">
+        </CardHeader>
+        <CardContent>
+          {/* Round num slider */}
+          <div className="flex mb-6 items-center gap-4 mt-4">
             <span className="text-sm">Max Rounds:</span>
             <Slider
               defaultValue={[maxRounds.toString()]}
@@ -231,8 +238,6 @@ export default function StructuredDebateArea({
             />
             <span className="text-sm">{maxRounds}</span>
           </div>
-        </CardHeader>
-        <CardContent>
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
@@ -240,6 +245,7 @@ export default function StructuredDebateArea({
           >
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="edit-prompts">Edit Prompts</TabsTrigger>
               {Array.from(
                 { length: maxRounds },
                 (_, i) => i + 1
@@ -252,7 +258,6 @@ export default function StructuredDebateArea({
                   Round {round}
                 </TabsTrigger>
               ))}
-              <TabsTrigger value="edit-prompts">Edit Prompts</TabsTrigger>
             </TabsList>
           </Tabs>
           <Tabs value={activeTab} className="w-full">
@@ -268,9 +273,9 @@ export default function StructuredDebateArea({
               (round) => (
                 <TabsContent key={round} value={round.toString()}>
                   <div className="space-y-4">
-                    <div className="text-sm text-gray-500 font-medium mb-4">
+                    {/* <div className="text-sm text-gray-500 font-medium mb-4">
                       {getRoundName(round)}
-                    </div>
+                    </div> */}
                     <div className="p-4 border rounded-lg bg-gray-50">
                       {getMessagesForRound(round).length > 0 ? (
                         getMessagesForRound(round).map((msg, i) => (

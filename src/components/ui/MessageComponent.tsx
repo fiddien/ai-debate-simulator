@@ -45,16 +45,15 @@ const ThinkingSection = ({ content }: { content: string }) => {
 
   return (
     <div>
-    <Button
+    <button
       onClick={() => setIsExpanded(!isExpanded)}
-      className="w-full gap-2 hover:bg-white"
-      variant="ghost"
+      className="text-gray-500 text-sm w-full gap-2 hover:bg-white align-middle flex items-center p-3 rounded-md"
     >
       {isExpanded ? <FaChevronDown size={12} /> : <FaChevronRight size={12} />}
       Thinking Process
-    </Button>
+    </button>
     <article className="prose prose-md max-w-none">
-      <div className={`${isExpanded ? 'block' : 'hidden'} px-2 bg-white rounded-md`}>
+      <div className={`${isExpanded ? 'block' : 'hidden'} px-2 py-1 bg-white rounded-md`}>
         <Markdown
           remarkPlugins={[remarkBreaks]}
           components={{

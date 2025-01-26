@@ -57,17 +57,19 @@ export default function FilterMenu({
         </CardTitle>
         <CardDescription>
           Select level and label to filter scenarios.
-          {filteredCount === 0 ? (
-            <div className="text-red-500 mt-2">
-              No scenarios match the selected combination of level and label.
-            </div>
-          ) : (
-            <div className="mt-2">
-              Found {filteredCount} of {totalCount} scenarios.
-            </div>
-          )}
         </CardDescription>
       </CardHeader>
+      <CardContent>
+        {filteredCount === 0 ? (
+          <div className="text-amber-700 mt-2">
+            No scenarios match the selected combination of level and label.
+          </div>
+        ) : (
+          <div className="mt-2">
+            Found {filteredCount} of {totalCount} scenarios.
+          </div>
+        )}
+      </CardContent>
       <CardContent>
         <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
           <Gauge className="w-5 h-5" />
@@ -87,6 +89,8 @@ export default function FilterMenu({
             </Button>
           ))}
         </div>
+        </CardContent>
+        <CardContent>
         <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
           <Filter className="w-5 h-5" />
           Label

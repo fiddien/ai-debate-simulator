@@ -139,6 +139,7 @@ export default function InitialResponseArea({
         >
           <TabsList className="align-middle">
             <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="edit-prompts">Edit Prompts</TabsTrigger>
             {getUniqueModels().map((model) => (
               <TabsTrigger
                 key={model}
@@ -148,7 +149,6 @@ export default function InitialResponseArea({
                 {model}
               </TabsTrigger>
             ))}
-            <TabsTrigger value="edit-prompts">Edit Prompts</TabsTrigger>
           </TabsList>
         </Tabs>
         {error && (

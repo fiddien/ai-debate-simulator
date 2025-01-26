@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import * as React from "react";
-import { PenBoxIcon } from "lucide-react";
+import { PenBoxIcon, ListIcon } from "lucide-react";
 
 const Tabs = TabsPrimitive.Root;
 
@@ -33,6 +33,7 @@ const TabsTrigger = React.forwardRef<
     )}
     {...props}
   >
+    {value === "overview" && <ListIcon size={16} />}
     {value === "edit-prompts" && <PenBoxIcon size={16} />}
     {children}
   </TabsPrimitive.Trigger>
