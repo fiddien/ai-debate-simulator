@@ -55,7 +55,7 @@ export const generateDebaterPrompt = (
     .replace("{question}", question)
     .replace("{answer_defending}", defendingAnswer)
     .replace("{answer_opposing}", opposingAnswer);
-  const userMessage2 = DEBATE_CONFIG.PROMPTS.DEBATE.USER_PROMPT
+  const userMessage2 = DEBATE_CONFIG.PROMPTS.DEBATE.USER_PROMPT_2
     .replace("{situation}", scenario.situation)
     .replace("{transcript}", transcript)
     .replace("{new_argument_request}", newArgumentRequest)

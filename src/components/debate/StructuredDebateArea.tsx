@@ -213,7 +213,7 @@ export default function StructuredDebateArea({
       {/* Structured Debate Card */}
       <Card className="mb-6" ref={cardRef}>
         <CardHeader>
-          <CardTitle>Structured Debate</CardTitle>
+          <CardTitle>AI Debate</CardTitle>
           <div className="flex items-center gap-4 mt-4">
             <span className="text-sm">Max Rounds:</span>
             <Slider
@@ -328,7 +328,7 @@ export default function StructuredDebateArea({
             </Button>
           )}
 
-          {currentRound <= DEBATE_CONFIG.MAX_ROUNDS && (
+          {/* {currentRound <= DEBATE_CONFIG.MAX_ROUNDS && (
             <Button
               variant="default"
               disabled={!canRunRound()}
@@ -343,7 +343,7 @@ export default function StructuredDebateArea({
                 <>Run Round {currentRound}</>
               )}
             </Button>
-          )}
+          )} */}
 
           {isRoundComplete(currentRound) &&
             currentRound < maxRounds && (
@@ -361,7 +361,7 @@ export default function StructuredDebateArea({
             </Button>
           )}
 
-          {activeTab === "overview" && currentRound <= 4 && (
+          {currentRound <= DEBATE_CONFIG.MAX_ROUNDS && (
             <Button
               variant="default"
               disabled={!canRunRound()}
@@ -376,7 +376,7 @@ export default function StructuredDebateArea({
                   Running Round {currentRound}...
                 </>
               ) : (
-                <>Continue to Round {currentRound}</>
+                <>Run Round {currentRound}</>
               )}
             </Button>
           )}
