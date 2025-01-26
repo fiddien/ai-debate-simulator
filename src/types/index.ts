@@ -15,18 +15,22 @@ export interface Scenario {
 }
 
 export interface Message {
-  stage: number;
-  actor: string;
+  round: number;
+  name: string;
   content: string;
+  content_thinking: string;
+  content_argument: string;
   side: "left" | "right";
   model: string;
 }
 
 export type JudgeScenario = {
   situation: string;
-  action: string;
-  actors: string[];
-  moral_foundations?: string[];
+  question: string;
+  answer_a: string;
+  answer_b: string;
+  name_a: string;
+  name_b: string;
 };
 
 export type DebateMessage = {
@@ -40,16 +44,77 @@ export interface MoralFoundation {
   label: string;
 }
 
+export interface DebateScenario {
+  situation: string;
+  question: string;
+  answer_options: string[];
+  label: string;
+  id: string;
+  level: string;
+}
+
+export interface DebateContext {
+  situation: string;
+  question: string;
+  name: string;
+  answer_defending: string;
+  answer_opposing: string;
+  word_limit: number;
+  transcript: string;
+  round_number: number;
+}
+
+export interface DebateResponse {
+  debate_round: number;
+  turn: number;
+  name: string;
+  response: string;
+  response_arguments: string;
+  validated_response_arguments: string;
+}
+
+export interface DebateRecord {
+  scenario: DebateScenario;
+  debater_positions: { [key: string]: [string, string] };
+  debater_models: { [key: string]: string };
+  swap: boolean;
+  all_wrong: boolean;
+  id: string;
+  transcript: DebateResponse[];
+}
+
+export interface JudgeContext {
+  question: string;
+  answer_a: string;
+  answer_b: string;
+  name_a: string;
+  name_b: string;
+  transcript: string;
+}
+
+export interface JudgeResponse {
+  chosen_answer: "A" | "B";
+  reasoning: string;
+  confidence: number;
+}
+
+export interface JudgementResult {
+  id: string;
+  judgement: string;
+  model: string;
+}
+
 export interface DebateAreaProps {
   messages: Message[];
   setMessages: (messages: Message[]) => void;
-  scenario: Scenario;
+  debateScenario: DebateScenario;
   apiSetup: ApiSetup;
-  rounds: number;
+  rounds?: number;
 }
+
 export interface DebateContextType {
-  currentScenario: Scenario | null;
-  setCurrentScenario: (scenario: Scenario | null) => void;
+  currentScenario: DebateScenario | null;
+  setCurrentScenario: (scenario: DebateScenario | null) => void;
   messages: Message[];
   setMessages: (messages: Message[]) => void;
   debateMessages: Message[];
@@ -70,15 +135,14 @@ export interface ApiSetup {
     DeepSeek: string;
     Groq: string;
   };
-  debaterModels: { debaterA: string; debaterB: string; judge: string };
+  models: { debaterA: string; debaterB: string; judge: string };
 }
 
 export interface SetupAreaProps {
   onSetupComplete: (setup: ApiSetup) => void;
 }
 
-// export interface DebateAreaProps {
-//   messages: Message[]
-//   setMessages: (messages: Message[]) => void
-//   scenario: Scenario
-// }
+export interface PromptMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}

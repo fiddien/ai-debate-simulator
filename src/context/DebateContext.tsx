@@ -1,12 +1,12 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
-import { Scenario, Message, DebateContextType } from "@/types";
+import { DebateScenario, Message, DebateContextType } from "@/types";
 
 const DebateContext = createContext<DebateContextType | undefined>(undefined);
 
 export function DebateProvider({ children }: { children: ReactNode }) {
-  const [currentScenario, setCurrentScenario] = useState<Scenario | null>(null);
+  const [currentScenario, setCurrentScenario] = useState<DebateScenario | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [debateMessages, setDebateMessages] = useState<Message[]>([]);
   const [debateUnsMessages, setDebateUnsMessages] = useState<Message[]>([]);

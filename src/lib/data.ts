@@ -1,29 +1,19 @@
-import { Scenario } from "@/types";
-import rawScenariosData from "../data/scenarios.json";
-import { parse } from "path";
+import { DebateScenario } from "@/types";
 
-let scenarios: Scenario[] = [];
+let scenarios: DebateScenario[] = [];
 
-// Initialize scenarios from JSON data
-function initializeScenarios() {
+// Initialize scenarios from JSON files in the folder
+async function initializeScenarios() {
+  const context = require.context("../data/scenarios/", false, /\.json$/);
   try {
-    scenarios = (rawScenariosData as any[]).map((record, index) => ({
-      id: index,
-      area: record.area,
-      situation: record.situation,
-      actors: record.characters.split("|"),
-      rot: record.rot,
-      rotCategorization: record["rot-categorization"]?.split("|") || [],
-      rotMoralFoundations: record["rot-moral-foundations"]?.split("|") || [],
-      rotAgree: parseFloat(record["rot-agree"]),
-      rotBad: parseFloat(record["rot-bad"]),
-      rotJudgment: record["rot-judgment"],
-      action: record.action,
-      actionMoralJudgment: parseFloat(record["action-moral-judgment"]),
-      actionAgree: parseFloat(record["action-agree"]),
-    }));
+    scenarios = await Promise.all(
+      context.keys().map(async (key) => {
+        const data = await import(`../data/scenarios/${key.slice(2)}`);
+        return data as DebateScenario;
+      })
+    );
   } catch (error) {
-    console.warn("Failed to parse scenarios data, using empty array:", error);
+    console.warn("Failed to load scenarios data, using empty array:", error);
   }
 }
 
@@ -34,25 +24,18 @@ export const getScenarios = () => scenarios;
 export const isLoadingScenarios = () => false;
 
 export interface ScenariosResult {
-  scenarios: Scenario[];
+  scenarios: DebateScenario[];
   totalCount: number;
   filteredCount: number;
 }
 
 export const getFilteredScenarios = (
-  foundations: string[]
+  level: string,
+  label: string
 ): ScenariosResult => {
   const allScenarios = scenarios;
-  if (foundations.includes("all") || foundations.length === 0) {
-    return {
-      scenarios: allScenarios,
-      totalCount: allScenarios.length,
-      filteredCount: allScenarios.length,
-    };
-  }
-
-  const filtered = allScenarios.filter((s) =>
-    foundations.every((f) => s.rotMoralFoundations.includes(f))
+  const filtered = allScenarios.filter(
+    s => s.level === level && s.label === label
   );
   return {
     scenarios: filtered,
@@ -61,8 +44,8 @@ export const getFilteredScenarios = (
   };
 };
 
-export const getRandomScenario = (foundations: string[]) => {
-  const result = getFilteredScenarios(foundations);
+export const getRandomScenario = (level: string, label: string) => {
+  const result = getFilteredScenarios(level, label);
   if (result.filteredCount === 0) return null;
   const randomIndex = Math.floor(Math.random() * result.scenarios.length);
   return result.scenarios[randomIndex];

@@ -1,5 +1,4 @@
 import { getFilteredScenarios } from "@/lib/data";
-import { MoralFoundation } from "@/types";
 import { Button } from "@/ui/button";
 import {
   Card,
@@ -8,48 +7,37 @@ import {
   CardHeader,
   CardTitle,
 } from "@/ui/card";
-import { Cross, Crown, Filter, Handshake, Heart, Scale } from "lucide-react";
+import { Filter } from "lucide-react";
 
 interface FilterMenuProps {
-  selectedFoundations: string[];
-  onFoundationChange: (value: string) => void;
+  selectedLevel: string;
+  selectedLabel: string;
+  onLevelChange: (value: string) => void;
+  onLabelChange: (value: string) => void;
   onGetScenario: () => void;
 }
 
-const moralFoundations: (MoralFoundation & { icon: React.ElementType })[] = [
-  { value: "all", label: "All", icon: Filter },
-  { value: "care-harm", label: "Care vs. Harm", icon: Heart },
-  { value: "fairness-cheating", label: "Fairness vs. Cheating", icon: Scale },
-  { value: "loyalty-betrayal", label: "Loyalty vs. Betrayal", icon: Handshake },
-  {
-    value: "authority-subversion",
-    label: "Authority vs. Subversion",
-    icon: Crown,
-  },
-  {
-    value: "sanctity-degradation",
-    label: "Sanctity vs. Degradation",
-    icon: Cross,
-  },
-];
+const levels = ["LowConflict", "HighConflict"];
+const labels = ["proved", "disproved", "unknown"];
 
 export default function FilterMenu({
-  selectedFoundations,
-  onFoundationChange,
+  selectedLevel,
+  selectedLabel,
+  onLevelChange,
+  onLabelChange,
   onGetScenario,
 }: FilterMenuProps) {
-  const { filteredCount, totalCount } =
-    getFilteredScenarios(selectedFoundations);
+  const { filteredCount, totalCount } = getFilteredScenarios(selectedLevel, selectedLabel);
 
   return (
     <Card className="mb-6">
       <CardHeader>
         <CardTitle>Filter Scenarios</CardTitle>
         <CardDescription>
-          Select moral foundations to filter scenarios (AND condition).
+          Select level and label to filter scenarios.
           {filteredCount === 0 ? (
             <div className="text-red-500 mt-2">
-              No scenarios match the selected combination of foundations.
+              No scenarios match the selected combination of level and label.
             </div>
           ) : (
             <div className="mt-2">
@@ -59,23 +47,31 @@ export default function FilterMenu({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <h3 className="text-lg font-semibold mb-2">Moral Foundations</h3>
+        <h3 className="text-lg font-semibold mb-2">Level</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
-          {moralFoundations.map((foundation) => {
-            const Icon = foundation.icon;
-            const isSelected = selectedFoundations.includes(foundation.value);
-            return (
-              <Button
-                key={foundation.value}
-                variant={isSelected ? "default" : "outline"}
-                className={`flex gap-2 items-center justify-center h-auto py-3`}
-                onClick={() => onFoundationChange(foundation.value)}
-              >
-                <Icon size={18} />
-                {foundation.label}
-              </Button>
-            );
-          })}
+          {levels.map((level) => (
+            <Button
+              key={level}
+              variant={selectedLevel === level ? "default" : "outline"}
+              className="flex gap-2 items-center justify-center h-auto py-3"
+              onClick={() => onLevelChange(level)}
+            >
+              {level}
+            </Button>
+          ))}
+        </div>
+        <h3 className="text-lg font-semibold mb-2">Label</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+          {labels.map((label) => (
+            <Button
+              key={label}
+              variant={selectedLabel === label ? "default" : "outline"}
+              className="flex gap-2 items-center justify-center h-auto py-3"
+              onClick={() => onLabelChange(label)}
+            >
+              {label}
+            </Button>
+          ))}
         </div>
         <Button className="w-full" onClick={onGetScenario}>
           Get Random Scenario

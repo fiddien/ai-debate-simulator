@@ -30,7 +30,6 @@ export const apiPlaceholder = {
   Groq: "gsk_...",
 };
 
-// TODO: remove the default values
 export const defaultApiSetup: ApiSetup = {
   apiKeys: {
     OpenAI: "",
@@ -39,7 +38,7 @@ export const defaultApiSetup: ApiSetup = {
     DeepSeek: "",
     Groq: "",
   },
-  debaterModels: {
+  models: {
     debaterA: "",
     debaterB: "",
     judge: "",

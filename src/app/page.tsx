@@ -15,7 +15,7 @@ import { useDebate } from "@/context/DebateContext";
 import { getRandomScenario } from "@/lib/data";
 import { ApiSetup } from "@/types";
 import { useEffect, useState } from "react";
-import DebateSetupArea from "@/components/debate/DebateSetupArea";
+import { DEBATE_CONFIG } from "@/constants/debateConfig";
 
 export default function Home() {
   const {
@@ -33,43 +33,28 @@ export default function Home() {
     setIsHumanJudge,
   } = useDebate();
 
-  const [selectedFoundations, setSelectedFoundations] = useState<string[]>([
-    "all",
-  ]);
+  const [selectedLevel, setSelectedLevel] = useState<string>("LowConflict");
+  const [selectedLabel, setSelectedLabel] = useState<string>("proved");
   const [apiSetup, setApiSetup] = useState<ApiSetup>(defaultApiSetup);
   const [setupComplete, setSetupComplete] = useState(false);
-  const [unstructuredRounds, setUnstructuredRounds] = useState(1);
-  const [structuredRounds, setStructuredRounds] = useState(1);
+  const [prompts, setPrompts] = useState(DEBATE_CONFIG.PROMPTS);
 
-  const handleFoundationChange = (foundation: string) => {
-    setSelectedFoundations((prev) => {
-      // If clicking 'all', reset to just 'all'
-      if (foundation === "all") return ["all"];
+  const handleLevelChange = (level: string) => {
+    setSelectedLevel(level);
+  };
 
-      // If selecting a specific foundation while 'all' is selected,
-      // remove 'all' and add the specific one
-      if (prev.includes("all")) {
-        return [foundation];
-      }
-
-      // Toggle the foundation
-      const newFoundations = prev.includes(foundation)
-        ? prev.filter((f) => f !== foundation)
-        : [...prev, foundation];
-
-      // If no foundations selected, default to 'all'
-      return newFoundations.length === 0 ? ["all"] : newFoundations;
-    });
+  const handleLabelChange = (label: string) => {
+    setSelectedLabel(label);
   };
 
   const handleGetScenario = () => {
-    const scenario = getRandomScenario(selectedFoundations);
+    const scenario = getRandomScenario(selectedLevel, selectedLabel);
     if (scenario) {
       setCurrentScenario(scenario);
       setDebateMessages([]);
       setJudgment("");
     } else {
-      console.warn(`No scenarios found for foundations:`, selectedFoundations);
+      console.warn(`No scenarios found for level:${selectedLevel}, label:${selectedLabel}`);
     }
   };
 
@@ -141,7 +126,7 @@ export default function Home() {
   return (
     <ClientProvider>
       <MainLayout>
-        <div className="max-w-4xl mx-auto p-4">
+        <div className="max-w-4xl mx-auto">
           <ProgressIndicator steps={steps} onStepClick={handleStepClick} />
 
           <div id="setup">
@@ -158,8 +143,10 @@ export default function Home() {
 
           <div id="filter">
             <FilterMenu
-              selectedFoundations={selectedFoundations}
-              onFoundationChange={handleFoundationChange}
+              selectedLevel={selectedLevel}
+              selectedLabel={selectedLabel}
+              onLevelChange={handleLevelChange}
+              onLabelChange={handleLabelChange}
               onGetScenario={handleGetScenario}
             />
           </div>
@@ -168,37 +155,19 @@ export default function Home() {
             <>
               <div id="scenario">
                 <ScenarioCard scenario={currentScenario} />
-                <InitialResponseArea
-                  messages={messages}
-                  setMessages={setMessages}
-                  scenario={currentScenario}
-                  apiSetup={apiSetup}
-                />
               </div>
               <div id="debate">
-
-                {setupComplete && (
-                  <DebateSetupArea
-                    unstructuredRounds={unstructuredRounds}
-                    structuredRounds={structuredRounds}
-                    onChangeUnstructuredRounds={setUnstructuredRounds}
-                    onChangeStructuredRounds={setStructuredRounds}
-                  />
-                )}
-
-                <UnstructuredDebateArea
-                  messages={debateUnsMessages}
-                  setMessages={setDebateUnsMessages}
+                <InitialResponseArea
+                  messages={messages}
                   scenario={currentScenario}
+                  setMessages={setMessages}
                   apiSetup={apiSetup}
-                  rounds={unstructuredRounds}
                 />
                 <StructuredDebateArea
                   messages={debateMessages}
                   setMessages={setDebateMessages}
-                  scenario={currentScenario}
+                  debateScenario={currentScenario}
                   apiSetup={apiSetup}
-                  rounds={structuredRounds}
                 />
                 <JudgmentArea
                   isHumanJudge={isHumanJudge}

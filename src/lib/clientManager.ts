@@ -1,5 +1,5 @@
 import { modelToProvider } from "@/constants/setupConstants";
-import { ApiSetup } from "@/types";
+import { ApiSetup, PromptMessage } from "@/types";
 import Anthropic from "@anthropic-ai/sdk";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Groq from "groq-sdk";
@@ -100,57 +100,76 @@ class LLMClientManager {
     }
   }
 
-  async generateResponse(model: string, prompt: string): Promise<string> {
+  async generateResponse(
+    model: string,
+    messages: PromptMessage[]
+  ): Promise<string> {
     const provider = modelToProvider[model];
     if (!provider) throw new Error(`No provider found for model: ${model}`);
 
     try {
       const client = this.getClient(provider);
 
+      console.log(`Messages: ${messages}`);
+
       switch (provider) {
         case "OpenAI":
           const openaiResponse = await (
             client as OpenAI
           ).chat.completions.create({
-            model,
-            messages: [{ role: "user", content: prompt }],
+            model: model,
+            messages: messages,
           });
-          return openaiResponse.choices[0].message.content || "";
+          return openaiResponse.choices[0].message.content?.trim() || "";
 
         case "Anthropic":
           if (!this.anthropicClient)
             throw new Error("Anthropic client not initialized");
           const anthropicResponse = await this.anthropicClient.messages.create({
-            model,
-            messages: [{ role: "user", content: prompt }],
+            model: model,
+            messages: messages.map((m) => ({
+              role: m.role === "assistant" ? "assistant" : "user",
+              content: m.content,
+            })),
             max_tokens: 1024,
           });
-          return anthropicResponse.content[0].text || "";
+          if (anthropicResponse.content[0].type === "text") {
+            return anthropicResponse.content[0].text.trim();
+          } else {
+            return "";
+          }
 
         case "Gemini":
           if (!this.geminiClient)
             throw new Error("Gemini client not initialized");
           const geminiModel = this.geminiClient.getGenerativeModel({ model });
-          const geminiResponse = await geminiModel.generateContent(prompt);
-          return geminiResponse.response.text();
+          // Gemini expects messages concatenated into a single string
+          console.log(`[DEBUG] Messages: ${messages}`);
+          const geminiPrompt = messages
+            .map((m) => `${m.role}: ${m.content}`)
+            .join("\n");
+          const geminiResponse = await geminiModel.generateContent(
+            geminiPrompt
+          );
+          return geminiResponse.response.text().trim();
 
         case "Groq":
           if (!this.groqClient) throw new Error("Groq client not initialized");
           const groqResponse = await this.groqClient.chat.completions.create({
-            messages: [{ role: "user", content: prompt }],
-            model,
+            model: model,
+            messages: messages,
           });
-          return groqResponse.choices[0].message.content || "";
+          return groqResponse.choices[0].message.content?.trim() || "";
 
         case "DeepSeek":
           if (!this.deepseekClient)
             throw new Error("DeepSeek client not initialized");
           const deepseekResponse =
             await this.deepseekClient.chat.completions.create({
-              model,
-              messages: [{ role: "user", content: prompt }],
+              model: model,
+              messages: messages,
             });
-          return deepseekResponse.choices[0].message.content || "";
+          return deepseekResponse.choices[0].message.content?.trim() || "";
 
         default:
           throw new Error(`Unsupported provider: ${provider}`);
@@ -162,11 +181,11 @@ class LLMClientManager {
   }
 
   async testConnections() {
-    const { debaterModels } = this.apiSetup;
+    const { models } = this.apiSetup;
     const modelsToTest = new Set([
-      debaterModels.debaterA,
-      debaterModels.debaterB,
-      debaterModels.judge,
+      models.debaterA,
+      models.debaterB,
+      models.judge,
     ]);
 
     for (const model of modelsToTest) {

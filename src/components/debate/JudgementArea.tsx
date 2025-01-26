@@ -7,6 +7,9 @@ import {
   CardTitle,
 } from "@/ui/card";
 import { Textarea } from "@/ui/textarea";
+import React, { useState } from 'react';
+import { DEBATE_CONFIG } from "@/constants/debateConfig";
+
 
 interface JudgmentAreaProps {
   isHumanJudge: boolean;

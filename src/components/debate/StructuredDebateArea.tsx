@@ -1,7 +1,6 @@
-import { DEBATE_CONFIG, STAGE_NAMES } from "@/constants/stageConfig";
+import { DEBATE_CONFIG, ROUND_NAMES } from "@/constants/debateConfig";
 import { useClient } from "@/context/ClientContext";
-import { logToMemory } from "@/lib/logger";
-import { generateDebatePrompt } from "@/lib/prompts";
+import { generateDebaterPrompt } from "@/lib/promptGenerator";
 import { DebateAreaProps, Message } from "@/types";
 import { Button } from "@/ui/button";
 import {
@@ -16,87 +15,95 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import { Loader2, MessageSquare } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { OverviewTab, OverviewItem } from "@/ui/overview-tab";
+import RenderPromptInput from "./RenderPromptInput";
+import { validateCitations, extractThinking, extractArguments } from "@/lib/utils";
 
-const getStageName = (stage: number) => {
-  return STAGE_NAMES[stage - 1] || "Debate Completed";
+const getRoundName = (round: number) => {
+  return ROUND_NAMES[round - 1] || "Debate Completed";
 };
+
 
 export default function StructuredDebateArea({
   messages,
   setMessages,
-  scenario,
+  debateScenario,
   apiSetup,
-  rounds = 1
 }: DebateAreaProps) {
   const { clientManager } = useClient();
-  const [currentStage, setCurrentStage] = useState(1);
+  const [currentRound, setCurrentRound] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>("overview"); // Changed default tab
+  const [activeTab, setActiveTab] = useState<string>("overview");
   const cardRef = React.useRef<HTMLDivElement>(null);
+  const [prompts, setPrompts] = useState(DEBATE_CONFIG.PROMPTS.DEBATE);
+  const latestMessagesRef = React.useRef(messages);
+
+  // Update ref when messages change
+  useEffect(() => {
+    latestMessagesRef.current = messages;
+  }, [messages]);
 
   const scrollToTop = () => {
     cardRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
-    setActiveTab(currentStage.toString());
-  }, [currentStage]);
+    setActiveTab(currentRound.toString());
+  }, [currentRound]);
 
-  const isStageComplete = (stage: number) => {
-    return getMessagesForStage(stage).length === 2 * rounds;
+  const isRoundComplete = (round: number) => {
+    const roundMessages = getMessagesForRound(round);
+    return roundMessages.length === 2; // Each round should have exactly 2 messages
   };
 
-  const isPreviousStageComplete = () => {
-    if (currentStage === 1) return true;
-    return isStageComplete(currentStage - 1);
+  const isPreviousRoundComplete = () => {
+    if (currentRound === 1) return true;
+    return isRoundComplete(currentRound - 1);
   };
 
   const hasModelsAssigned = () => {
-    return apiSetup.debaterModels.debaterA && apiSetup.debaterModels.debaterB;
+    return apiSetup.models.debaterA && apiSetup.models.debaterB;
   };
 
-  const canRunStage = () => {
+  const canRunRound = () => {
     return (
-      isPreviousStageComplete() &&
-      !isStageComplete(currentStage) &&
+      isPreviousRoundComplete() &&
+      !isRoundComplete(currentRound) &&
       !isGenerating &&
-      hasModelsAssigned()
+      hasModelsAssigned() &&
+      currentRound <= ROUND_NAMES.length
     );
   };
 
-  const getDebateActors = () => {
-    if (scenario.actors.length === 1) {
-      return [scenario.actors[0], "Observer"];
-    }
-    return scenario.actors;
-  };
-
-  const generateActorResponse = async (
-    actor: string,
+  const generateDebaterResponse = async (
+    name: "A" | "B",
     debater: "debaterA" | "debaterB"
   ) => {
-    const model = apiSetup.debaterModels[debater];
-    const prompt = generateDebatePrompt(
-      currentStage,
-      scenario,
-      messages,
-      actor,
-      true
+    const model = apiSetup.models[debater];
+    const currentMessages = latestMessagesRef.current;
+    console.log("Generating response for", name, "using model", model, "using latest messages", currentMessages);
+
+    const prompt = generateDebaterPrompt(
+      debateScenario,
+      currentMessages,
+      name,
+      currentRound,
     );
 
     try {
-      const messageContent = await clientManager.generateResponse(
-        model,
-        prompt
-      );
-      logToMemory(`Response received:\n${messageContent}`);
-      const actors = getDebateActors();
+      if (!clientManager) {
+        throw new Error("Client manager is not available");
+      }
+      const messageContent = await clientManager.generateResponse(model, prompt);
+      const validatedContent = validateCitations(messageContent, debateScenario.situation);
+      const contentArgument = extractArguments(validatedContent);
+
       return {
         model: model,
-        stage: currentStage,
-        actor: actor,
+        round: currentRound,
+        name: name,
         content: messageContent,
-        side: actor === actors[0] ? "left" : "right",
+        content_argument: contentArgument,
+        side: name === "A" ? "left" : "right",
       };
     } catch (error) {
       console.error("Error generating response:", error);
@@ -104,59 +111,78 @@ export default function StructuredDebateArea({
     }
   };
 
-  // Update runStage to handle multiple rounds
-  const runStage = async () => {
-    if (!canRunStage()) return;
-
+  const runRound = async () => {
     setIsGenerating(true);
-
     try {
-      const actors = getDebateActors();
-      const currentRound =
-        Math.floor(getMessagesForStage(currentStage).length / 2) + 1;
+      const responseA = await generateDebaterResponse("A", "debaterA");
+      if (responseA) {
+        await new Promise<void>((resolve) => {
+          setMessages(prev => {
+            const newMessages = [...prev, responseA];
+            latestMessagesRef.current = newMessages; // Update ref immediately
+            resolve();
+            return newMessages;
+          });
+        });
 
-      if (currentRound <= rounds) {
-        const responses = await Promise.all([
-          generateActorResponse(actors[0], "debaterA"),
-          generateActorResponse(actors[1], "debaterB"),
-        ]);
+        // Small delay to ensure state has propagated
+        await new Promise(resolve => setTimeout(resolve, 50));
 
-        const validResponses = responses.filter(
-          (r): r is Message => r !== null
-        );
-        setMessages([...messages, ...(validResponses as Message[])]);
+        const responseB = await generateDebaterResponse("B", "debaterB");
+        if (responseB) {
+          setMessages(prev => {
+            const newMessages = [...prev, responseB];
+            latestMessagesRef.current = newMessages; // Update ref immediately
+            return newMessages;
+          });
+        }
         scrollToTop();
       }
+    } catch (error) {
+      console.error("Error in runRound:", error);
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const getMessagesForStage = (stage: number) => {
-    return messages.filter((msg) => msg.stage === stage);
+  // Split the round progression into a separate function
+  const handleNextRound = () => {
+    if (currentRound < ROUND_NAMES.length) {
+      setCurrentRound(prev => prev + 1);
+      setActiveTab((currentRound + 1).toString());
+      scrollToTop();
+    }
   };
 
-  const getHighestStage = () => {
+  useEffect(() => {
+    console.log("Messages updated:", messages.length);
+  }, [messages]);
+
+  const getMessagesForRound = (round: number) => {
+    return messages.filter((msg) => msg.round === round);
+  };
+
+  const getHighestRound = () => {
     return Math.max(
       1,
-      ...messages.filter((msg) => msg.stage > 0).map((msg) => msg.stage)
+      ...messages.filter((msg) => msg.round > 0).map((msg) => msg.round)
     );
   };
 
   const getOverviewItems = (): OverviewItem[] => {
-    return Array.from({ length: STAGE_NAMES.length }, (_, i) => i + 1)
-      .map((stage) => {
-        const stageMessages = getMessagesForStage(stage);
-        if (stageMessages.length === 0) return null;
+    return Array.from({ length: ROUND_NAMES.length }, (_, i) => i + 1)
+      .map((round) => {
+        const roundMessages = getMessagesForRound(round);
+        if (roundMessages.length === 0) return null;
         return {
-          id: stage.toString(),
-          title: getStageName(stage),
+          id: round.toString(),
+          title: getRoundName(round),
           content: (
             <>
-              {stageMessages.map((msg, i) => (
+              {roundMessages.map((msg, i) => (
                 <div key={i} className="mb-2">
                   <p className="text-sm font-medium text-gray-600">
-                    {msg.actor}:
+                    {msg.name}:
                   </p>
                   <p className="text-sm text-gray-600">
                     {msg.content}
@@ -165,13 +191,20 @@ export default function StructuredDebateArea({
               ))}
             </>
           ),
-          onClick: () => setActiveTab(stage.toString())
+          onClick: () => setActiveTab(round.toString())
         };
       })
       .filter((item): item is OverviewItem => item !== null);
   };
 
-  const canProgress = currentStage < DEBATE_CONFIG.MAX_STAGES;
+  const canProgress = currentRound < DEBATE_CONFIG.MAX_STAGES;
+
+  const handlePromptChange = (key: string, value: string | Record<number, string>) => {
+    setPrompts((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
 
   return (
     <div>
@@ -189,17 +222,18 @@ export default function StructuredDebateArea({
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
               {Array.from(
-                { length: STAGE_NAMES.length },
+                { length: ROUND_NAMES.length },
                 (_, i) => i + 1
-              ).map((stage) => (
+              ).map((round) => (
                 <TabsTrigger
-                  key={stage}
-                  value={stage.toString()}
-                  disabled={stage > getHighestStage()}
+                  key={round}
+                  value={round.toString()}
+                  disabled={round > getHighestRound()}
                 >
-                  Stage {stage}
+                  Round {round}
                 </TabsTrigger>
               ))}
+              <TabsTrigger value="edit-prompts">Edit Prompts</TabsTrigger>
             </TabsList>
           </Tabs>
           <Tabs value={activeTab} className="w-full">
@@ -207,28 +241,28 @@ export default function StructuredDebateArea({
               <div className="p-4 border rounded-lg bg-gray-50">
                 <OverviewTab
                   items={getOverviewItems()}
-                  emptyMessage="Start the structured debate by running Stage 1"
+                  emptyMessage="Start the structured debate by running Round 1"
                 />
               </div>
             </TabsContent>
-            {Array.from({ length: STAGE_NAMES.length }, (_, i) => i + 1).map(
-              (stage) => (
-                <TabsContent key={stage} value={stage.toString()}>
+            {Array.from({ length: ROUND_NAMES.length }, (_, i) => i + 1).map(
+              (round) => (
+                <TabsContent key={round} value={round.toString()}>
                   <div className="space-y-4">
                     <div className="text-sm text-gray-500 font-medium mb-4">
-                      {getStageName(stage)}
+                      {getRoundName(round)}
                     </div>
                     <div className="p-4 border rounded-lg bg-gray-50">
-                      {getMessagesForStage(stage).length > 0 ? (
-                        getMessagesForStage(stage).map((msg, i) => (
+                      {getMessagesForRound(round).length > 0 ? (
+                        getMessagesForRound(round).map((msg, i) => (
                           <MessageComponent key={i} {...msg} />
                         ))
                       ) : (
                         <div className="flex items-center justify-center p-8 text-gray-500">
                           <MessageSquare className="mr-2" />
-                          {stage > currentStage
-                            ? "This stage is not yet available"
-                            : "No messages in this stage yet"}
+                          {round > currentRound
+                            ? "This round is not yet available"
+                            : "No messages in this round yet"}
                         </div>
                       )}
                     </div>
@@ -236,6 +270,20 @@ export default function StructuredDebateArea({
                 </TabsContent>
               )
             )}
+            <TabsContent value="edit-prompts">
+              <div className="p-4 border rounded-lg bg-gray-50">
+                {Object.keys(prompts).map((key) => (
+                  <div key={key} className="mb-4">
+                    <label className="block text-sm font-semibold mb-2">{key}</label>
+                    <RenderPromptInput
+                      promptKey={key}
+                      value={prompts[key as keyof typeof prompts]}
+                      handlePromptChange={handlePromptChange}
+                    />
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
           </Tabs>
         </CardContent>
 
@@ -253,7 +301,7 @@ export default function StructuredDebateArea({
             </Button>
           )}
 
-          {activeTab !== "overview" && currentStage > 1 && (
+          {activeTab !== "overview" && currentRound > 1 && (
             <Button
               variant="outline"
               onClick={() => {
@@ -266,62 +314,55 @@ export default function StructuredDebateArea({
             </Button>
           )}
 
-          {currentStage <= DEBATE_CONFIG.MAX_STAGES && (
+          {currentRound <= DEBATE_CONFIG.MAX_STAGES && (
             <Button
               variant="default"
-              disabled={!canRunStage()}
-              onClick={runStage}
+              disabled={!canRunRound()}
+              onClick={runRound}
             >
               {isGenerating ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Running Stage {currentStage}...
+                  Running Round {currentRound}...
                 </>
               ) : (
-                <>Run Stage {currentStage}</>
+                <>Run Round {currentRound}</>
               )}
             </Button>
           )}
 
-          {isStageComplete(currentStage) &&
-            currentStage < STAGE_NAMES.length && (
+          {isRoundComplete(currentRound) &&
+            currentRound < ROUND_NAMES.length && (
               <Button
                 variant="outline"
-                onClick={() => {
-                  setCurrentStage((prev) => {
-                    const nextStage = Math.min(prev + 1, STAGE_NAMES.length);
-                    setActiveTab(nextStage.toString());
-                    return nextStage;
-                  });
-                  scrollToTop();
-                }}
+                onClick={handleNextRound}
               >
                 Next →
               </Button>
             )}
 
-          {currentStage > STAGE_NAMES.length && (
+          {currentRound > ROUND_NAMES.length && (
             <Button variant="default" disabled>
               Debate Completed
             </Button>
           )}
 
-          {activeTab === "overview" && currentStage <= 4 && (
+          {activeTab === "overview" && currentRound <= 4 && (
             <Button
               variant="default"
-              disabled={!canRunStage()}
+              disabled={!canRunRound()}
               onClick={() => {
-                setActiveTab(currentStage.toString());
-                runStage();
+                setActiveTab(currentRound.toString());
+                runRound();
               }}
             >
               {isGenerating ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Running Stage {currentStage}...
+                  Running Round {currentRound}...
                 </>
               ) : (
-                <>Continue to Stage {currentStage}</>
+                <>Continue to Round {currentRound}</>
               )}
             </Button>
           )}

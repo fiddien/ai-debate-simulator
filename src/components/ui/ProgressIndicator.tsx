@@ -19,17 +19,6 @@ const ProgressIndicator = ({ steps, onStepClick }: ProgressIndicatorProps) => {
             className="progress-indicator-item"
             onClick={() => onStepClick(index)}
           >
-              <div
-                className={`progress-indicator-step ${
-                  step.isCurrent
-                    ? "progress-indicator-step-current"
-                    : step.isComplete
-                    ? "progress-indicator-step-complete"
-                    : "progress-indicator-step-incomplete"
-                }`}
-              >
-                {index + 1}
-              </div>
               <span
                 className={`progress-indicator-text ${
                   step.isCurrent

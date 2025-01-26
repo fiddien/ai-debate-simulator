@@ -1,5 +1,5 @@
 import { useClient } from "@/context/ClientContext";
-import { generateDebatePrompt } from "@/lib/prompts";
+import { generateDebaterPrompt } from "@/lib/promptGenerator";
 import { DebateAreaProps, Message } from "@/types";
 import { Button } from "@/ui/button";
 import {
@@ -16,52 +16,39 @@ import { useState } from "react";
 export default function UnstructuredDebateArea({
   messages,
   setMessages,
-  scenario,
+  debateScenario,
   apiSetup,
   rounds = 1,
 }: DebateAreaProps) {
   const { clientManager } = useClient();
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const getDebateActors = () => {
-    if (scenario.actors.length === 1) {
-      return [scenario.actors[0], "Observer"];
-    }
-    return scenario.actors;
-  };
-
-  const generateActorResponse = async (
-    actor: string,
+  const generateDebaterResponse = async (
+    name: "A" | "B",
     debater: "debaterA" | "debaterB"
   ) => {
-    const provider = Object.keys(apiSetup.apiKeys).find(
-      (key) => apiSetup.apiKeys[key as keyof typeof apiSetup.apiKeys]
-    );
-    if (!provider) return null;
-
-    const model = apiSetup.debaterModels[debater];
-    const currentStage =
-      messages.length > 0 ? Math.max(...messages.map((m) => m.stage)) + 1 : 1;
-    const prompt = generateDebatePrompt(
-      currentStage,
-      scenario,
+    const model = apiSetup.models[debater];
+    const currentRound =
+      messages.length > 0 ? Math.max(...messages.map((m) => m.round)) + 1 : 1;
+    const prompts = generateDebaterPrompt(
+      debateScenario,
       messages,
-      actor,
+      name,
+      currentRound,
       false
     );
 
     try {
       const messageContent = await clientManager.generateResponse(
         model,
-        prompt
+        prompts
       );
-      const actors = getDebateActors();
       return {
         model: model,
-        stage: currentStage,
-        actor: actor,
+        round: currentRound,
+        name: name,
         content: messageContent,
-        side: actor === actors[0] ? "left" : "right",
+        side: name === "A" ? "left" : "right",
       };
     } catch (error) {
       console.error("Error generating response:", error);
@@ -78,10 +65,9 @@ export default function UnstructuredDebateArea({
     setIsGenerating(true);
 
     try {
-      const actors = getDebateActors();
       const responses = await Promise.all([
-        generateActorResponse(actors[0], "debaterA"),
-        generateActorResponse(actors[1], "debaterB"),
+        generateDebaterResponse("A", "debaterA"),
+        generateDebaterResponse("B", "debaterB"),
       ]);
 
       const validResponses = responses.filter((r): r is Message => r !== null);
@@ -92,7 +78,7 @@ export default function UnstructuredDebateArea({
   };
 
   const hasModelsAssigned = () => {
-    return apiSetup.debaterModels.debaterA && apiSetup.debaterModels.debaterB;
+    return apiSetup.models.debaterA && apiSetup.models.debaterB;
   };
 
   const canRunDebate = () => {

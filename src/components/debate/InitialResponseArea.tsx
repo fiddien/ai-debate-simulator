@@ -1,7 +1,7 @@
 import { useClient } from "@/context/ClientContext";
 import { logToMemory } from "@/lib/logger";
-import { generateInitialResponsePrompt } from "@/lib/prompts";
-import { ApiSetup, Message, Scenario } from "@/types";
+import { generateBaselinePrompt } from "@/lib/promptGenerator";
+import { ApiSetup, DebateScenario, Message } from "@/types";
 import { Button } from "@/ui/button";
 import {
   Card,
@@ -15,11 +15,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import { Loader2, MessageSquare } from "lucide-react";
 import { useRef, useState } from "react";
 import { OverviewTab, OverviewItem } from "@/ui/overview-tab";
+import { DEBATE_CONFIG } from "@/constants/debateConfig";
+import RenderPromptInput from "./RenderPromptInput";
 
 interface InitialResponseAreaProps {
   messages: Message[];
   setMessages: (messages: Message[]) => void;
-  scenario: Scenario;
+  scenario: DebateScenario;
   apiSetup: ApiSetup;
 }
 
@@ -34,11 +36,12 @@ export default function InitialResponseArea({
   const [generatingModel, setGeneratingModel] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("overview");
+  const [prompts, setPrompts] = useState(DEBATE_CONFIG.PROMPTS.BASELINE);
 
-  const initialResponses = messages.filter((msg) => msg.stage === 0);
+  const initialResponses = messages.filter((msg) => msg.round === 0);
 
   const getUniqueModels = () => {
-    const models = Object.values(apiSetup.debaterModels);
+    const models = Object.values(apiSetup.models);
     return [...new Set(models)].filter(Boolean);
   };
 
@@ -60,20 +63,8 @@ export default function InitialResponseArea({
     }
 
     try {
-      const prompt = generateInitialResponsePrompt(scenario);
-
-      // Add prompt message
-      const promptMessage: Message = {
-        actor: "Human",
-        content: prompt,
-        side: "right",
-        model: "system",
-        stage: 0,
-      };
-      const messagesWithPrompt = [...messages, promptMessage];
-      setMessages(messagesWithPrompt);
-
-      logToMemory(`Sending prompt to ${provider} (${model}):\n${prompt}`);
+      // Use current prompts instead of default config
+      const prompt = generateBaselinePrompt(scenario, prompts);
       const messageContent = await clientManager.generateResponse(
         model,
         prompt
@@ -82,15 +73,17 @@ export default function InitialResponseArea({
 
       // Create only one message per model
       const newMessage: Message = {
-        actor: model, // Generic actor name since it's model-specific rather than debater-specific
-        content: messageContent,
-        side: "left",
         model: model,
-        stage: 0,
+        content: messageContent,
+        content_thinking: "",
+        content_argument: "",
+        side: "left",
+        name: model,
+        round: 0,
       };
 
-      setMessages([...messagesWithPrompt, newMessage]); // Use messagesWithPrompt instead of messages
-      setActiveTab(model); // Switch to the model's tab after generation
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setActiveTab(model);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";
@@ -117,11 +110,18 @@ export default function InitialResponseArea({
         return {
           id: model,
           title: model,
-          content: response.content,
+          content: response.content ?? "",
           onClick: () => setActiveTab(model)
         };
       })
       .filter((item): item is OverviewItem => item !== null) as OverviewItem[];
+  };
+
+  const handlePromptChange = (key: string, value: string | Record<number, string>) => {
+    setPrompts((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
   return (
@@ -146,6 +146,7 @@ export default function InitialResponseArea({
                 {model}
               </TabsTrigger>
             ))}
+            <TabsTrigger value="edit-prompts">Edit Prompts</TabsTrigger>
           </TabsList>
         </Tabs>
         {error && (
@@ -165,16 +166,28 @@ export default function InitialResponseArea({
           {getUniqueModels().map((model) => (
             <TabsContent key={model} value={model}>
               <div className="p-4 border rounded-lg bg-gray-50">
-                {getModelResponse(model) ? (
-                  <MessageComponent {...getModelResponse(model)!} />
-                ) : (
-                  <div className="flex items-center justify-center p-8 text-gray-500">
-                    No response generated yet
-                  </div>
-                )}
+                {initialResponses
+                  .filter((msg) => msg.model === model)
+                  .map((msg, index) => (
+                    <MessageComponent key={index} {...msg} />
+                  ))}
               </div>
             </TabsContent>
           ))}
+          <TabsContent value="edit-prompts">
+            <div className="p-4 border rounded-lg bg-gray-50">
+              {Object.keys(prompts).map((key) => (
+                <div key={key} className="mb-4">
+                  <label className="block text-sm font-semibold mb-2">{key}</label>
+                  <RenderPromptInput
+                    promptKey={key}
+                    value={prompts[key]}
+                    handlePromptChange={handlePromptChange}
+                  />
+                </div>
+              ))}
+            </div>
+          </TabsContent>
         </Tabs>
       </CardContent>
       <CardFooter className="flex gap-2 justify-center">

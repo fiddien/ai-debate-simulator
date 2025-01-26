@@ -70,7 +70,7 @@ body {
 @media (max-width: 768px) {
   .progress-indicator {
     position: sticky;
-    top: 1rem;
+    top: 0rem;
     z-index: 10;
   }
 }

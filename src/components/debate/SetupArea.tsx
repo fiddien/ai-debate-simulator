@@ -1,4 +1,5 @@
 import { apiPlaceholder, modelOptions } from "@/constants/setupConstants";
+import { defaultApiSetup } from "@/constants/setupConstantsTemp";
 import { useClient } from "@/context/ClientContext";
 import { ApiSetup, SetupAreaProps } from "@/types";
 import { Button } from "@/ui/button";
@@ -19,7 +20,7 @@ const SetupArea: React.FC<SetupAreaProps> = ({ onSetupComplete }) => {
   const [error, setError] = useState<string | null>(null);
 
   const [apiKeys, setApiKeys] = useState(defaultApiSetup.apiKeys);
-  const [debaterModels, setDebaterModels] = useState(defaultApiSetup.debaterModels);
+  const [models, setDebaterModels] = useState(defaultApiSetup.models);
 
   const handleApiKeyChange = (provider: string, value: string) => {
     setApiKeys({ ...apiKeys, [provider]: value });
@@ -29,7 +30,7 @@ const SetupArea: React.FC<SetupAreaProps> = ({ onSetupComplete }) => {
     debater: "debaterA" | "debaterB" | "judge",
     value: string
   ) => {
-    setDebaterModels({ ...debaterModels, [debater]: value });
+    setDebaterModels({ ...models, [debater]: value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,7 +39,7 @@ const SetupArea: React.FC<SetupAreaProps> = ({ onSetupComplete }) => {
     setError(null);
 
     try {
-      const setup = { apiKeys, debaterModels };
+      const setup = { apiKeys, models };
       await initializeClients(setup);
       onSetupComplete(setup);
     } catch (err) {
@@ -86,7 +87,7 @@ const SetupArea: React.FC<SetupAreaProps> = ({ onSetupComplete }) => {
               <h4 className="text-lg mb-4">Select Models</h4>
               <div>
                 <Select
-                  value={debaterModels.debaterA}
+                  value={models.debaterA}
                   onValueChange={(value) =>
                     handleModelChange("debaterA", value)
                   }
@@ -111,7 +112,7 @@ const SetupArea: React.FC<SetupAreaProps> = ({ onSetupComplete }) => {
               </div>
               <div>
                 <Select
-                  value={debaterModels.debaterB}
+                  value={models.debaterB}
                   onValueChange={(value) =>
                     handleModelChange("debaterB", value)
                   }
@@ -136,7 +137,7 @@ const SetupArea: React.FC<SetupAreaProps> = ({ onSetupComplete }) => {
               </div>
               <div>
                 <Select
-                  value={debaterModels.judge}
+                  value={models.judge}
                   onValueChange={(value) => handleModelChange("judge", value)}
                   required
                 >
