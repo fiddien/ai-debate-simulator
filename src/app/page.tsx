@@ -75,46 +75,19 @@ export default function Home() {
   }, []);
 
   const steps = [
-    {
-      name: "Setup Models",
-      isComplete: setupComplete,
-      isCurrent: !setupComplete,
-    },
-    {
-      name: "Select Scenario",
-      isComplete: !!currentScenario && setupComplete,
-      isCurrent: setupComplete && !currentScenario,
-    },
-    {
-      name: "Initial Response",
-      isComplete: messages.length > 0,
-      isCurrent: !!currentScenario && messages.length === 0,
-    },
-    {
-      name: "Models Debate",
-      isComplete: messages.length > 0,
-      isCurrent: !!currentScenario && messages.length === 0,
-    },
-    {
-      name: "Give Judgment",
-      isComplete: !!judgment,
-      isCurrent: messages.length > 0 && !judgment,
-    },
+    { name: "Setup Models" },
+    { name: "Select Scenario" },
+    { name: "Initial Response" },
+    { name: "Models Debate" },
+    { name: "Give Judgment" },
   ];
 
   const handleStepClick = (stepIndex: number) => {
-    // Only allow navigating to completed steps or the next available step
-    const previousStepsComplete = steps
-      .slice(0, stepIndex)
-      .every((step) => step.isComplete);
-
-    if (previousStepsComplete || steps[stepIndex].isCurrent) {
-      const sections = ["setup", "filter", "scenario", "debate"];
-      const targetId = sections[stepIndex];
-      const element = document.getElementById(targetId);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
+    const sections = ["setup", "filter", "scenario", "debate", "judgement"];
+    const targetId = sections[stepIndex];
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -164,6 +137,8 @@ export default function Home() {
                   debateScenario={currentScenario}
                   apiSetup={apiSetup}
                 />
+              </div>
+              <div id="judgement">
                 <JudgmentArea
                   judgment={judgment}
                   setJudgment={setJudgment}

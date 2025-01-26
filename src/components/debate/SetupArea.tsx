@@ -1,7 +1,7 @@
 'use client';
 
 import { apiPlaceholder, modelOptions } from "@/constants/setupConstants";
-import { defaultApiSetup } from "@/constants/setupConstantsTemp";
+import { defaultApiSetup } from "@/constants/setupConstants";
 import { useClient } from "@/context/ClientContext";
 import { SetupAreaProps } from "@/types";
 import { Button } from "@/ui/button";

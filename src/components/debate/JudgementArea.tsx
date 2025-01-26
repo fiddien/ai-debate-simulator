@@ -21,14 +21,14 @@ import RenderPromptInput from "./RenderPromptInput";
 import { ApiSetup } from "@/types";
 
 interface JudgmentAreaProps {
-  judgment: string;
-  setJudgment: (judgment: string) => void;
+  judgement: string;
+  setJudgment: (judgement: string) => void;
   onSubmit: () => void;
   apiSetup: ApiSetup;
 }
 
 export default function JudgmentArea({
-  judgment,
+  judgement,
   setJudgment,
   onSubmit,
   apiSetup,
@@ -38,7 +38,7 @@ export default function JudgmentArea({
   const { currentScenario, debateMessages } = useDebate();
   const [generatingJudgment, setGeneratingJudgment] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<string>("judgment");
+  const [activeTab, setActiveTab] = useState<string>("judgement");
   const [prompts, setPrompts] = useState(DEBATE_CONFIG.PROMPTS.JUDGEMENT);
 
   if (!currentScenario) return null;
@@ -80,7 +80,7 @@ export default function JudgmentArea({
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
       setError(errorMessage);
-      console.error("Error generating judgment:", error);
+      console.error("Error generating judgement:", error);
     } finally {
       setGeneratingJudgment(false);
     }
@@ -89,12 +89,12 @@ export default function JudgmentArea({
   return (
     <Card className="mb-6" ref={cardRef}>
       <CardHeader>
-        <CardTitle>Final Judgment</CardTitle>
+        <CardTitle>AI as Judge</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
-            <TabsTrigger value="judgment">Judgment</TabsTrigger>
+            <TabsTrigger value="judgement">Judgment</TabsTrigger>
             <TabsTrigger value="edit-prompts">Edit Prompts</TabsTrigger>
           </TabsList>
 
@@ -104,20 +104,22 @@ export default function JudgmentArea({
             </div>
           )}
 
-          <TabsContent value="judgment">
+          <TabsContent value="judgement">
             <div className="p-4 border rounded-lg bg-gray-50">
-              {judgment ? (
+              {judgement ? (
                 <MessageComponent
                   round={-1}
                   name={apiSetup.models.judge}
-                  content={judgment}
+                  content={judgement}
                   content_thinking=""
                   content_argument=""
                   model={apiSetup.models.judge}
                   side="left"
                 />
               ) : (
-                <p className="text-gray-500">No judgment generated yet.</p>
+              <div className="flex items-center justify-center p-8 text-gray-500">
+                <p className="text-gray-500">No judgement generated yet.</p>
+              </div>
               )}
             </div>
           </TabsContent>
