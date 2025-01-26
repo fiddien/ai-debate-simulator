@@ -85,7 +85,7 @@ export const MessageComponent = ({ content, side, model, name }: Message) => {
         }`}>
           {/* Avatar and Name container */}
           <div className="flex items-center gap-3 mb-2">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold
+            <div className={`px-4 h-10 rounded-full flex items-center justify-center font-bold
               ${side === "right" ? "bg-amber-100 text-amber-600" : "bg-teal-100 text-teal-600"}`}
             >
               {name}
@@ -109,6 +109,7 @@ export const MessageComponent = ({ content, side, model, name }: Message) => {
                 </article>
             ))}
         </div>
+        {/* Copy button */}
         <div className="flex justify-end my-2">
           <Button
             size="sm"

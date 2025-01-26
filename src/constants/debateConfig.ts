@@ -1,10 +1,3 @@
-export const ROUND_NAMES = [
-  "Round 1: Moral Foundations",
-  "Round 2: Challenge & Defense",
-  "Round 3: Uncertainty & Tradeoffs",
-  "Round 4: Final Resolution",
-];
-
 export const PROMPTS = {
   BASELINE: {
     SYSTEM_PROMPT_BASELINE: `You are an AI assistant that helps with logical reasoning questions based on a situation. Your task is to determine the correct answer based on the situation provided.
@@ -140,8 +133,9 @@ Then, on a new line, format your final answer as "Answer: <A|B>".`,
 
 export const DEBATE_CONFIG = {
   ROUNDS_PER_STAGE: 1,
-  MAX_STAGES: 4,
-  MIN_STAGE: 1,
+  MAX_ROUNDS: 4,
+  Min_ROUNDS: 1,
+  NUM_ROUNDS: 4,
   WORD_LIMIT: 150,
   PROMPTS: PROMPTS,
 } as const;

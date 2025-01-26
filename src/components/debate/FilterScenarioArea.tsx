@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/ui/card";
-import { Filter } from "lucide-react";
+import { AlertTriangle, Check, CircleDot, Filter, Gauge, HelpCircle, Shuffle, X } from "lucide-react";
 
 interface FilterMenuProps {
   selectedLevel: string;
@@ -29,10 +29,30 @@ export default function FilterMenu({
 }: FilterMenuProps) {
   const { filteredCount, totalCount } = getFilteredScenarios(selectedLevel, selectedLabel);
 
+  const getLevelIcon = (level: string) => {
+    switch (level) {
+      case "LowConflict": return <CircleDot className="w-4 h-4" />;
+      case "HighConflict": return <AlertTriangle className="w-4 h-4" />;
+      default: return null;
+    }
+  };
+
+  const getLabelIcon = (label: string) => {
+    switch (label) {
+      case "proved": return <Check className="w-4 h-4" />;
+      case "disproved": return <X className="w-4 h-4" />;
+      case "unknown": return <HelpCircle className="w-4 h-4" />;
+      default: return null;
+    }
+  };
+
   return (
     <Card className="mb-6">
       <CardHeader>
-        <CardTitle>Filter Scenarios</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <Filter className="w-5 h-5" />
+          Filter BoardgameQA Scenarios
+        </CardTitle>
         <CardDescription>
           Select level and label to filter scenarios.
           {filteredCount === 0 ? (
@@ -47,8 +67,12 @@ export default function FilterMenu({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <h3 className="text-lg font-semibold mb-2">Level</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+        <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+          <Gauge className="w-5 h-5" />
+          Level
+        </h3>
+        <span className="text-sm">The amount of conflicting information presented.</span>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 my-2">
           {levels.map((level) => (
             <Button
               key={level}
@@ -56,12 +80,17 @@ export default function FilterMenu({
               className="flex gap-2 items-center justify-center h-auto py-3"
               onClick={() => onLevelChange(level)}
             >
+              {getLevelIcon(level)}
               {level}
             </Button>
           ))}
         </div>
-        <h3 className="text-lg font-semibold mb-2">Label</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+        <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+          <Filter className="w-5 h-5" />
+          Label
+        </h3>
+        <span className="text-sm">The ground truth answer.</span>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 my-2">
           {labels.map((label) => (
             <Button
               key={label}
@@ -69,13 +98,14 @@ export default function FilterMenu({
               className="flex gap-2 items-center justify-center h-auto py-3"
               onClick={() => onLabelChange(label)}
             >
+              {getLabelIcon(label)}
               {label}
             </Button>
           ))}
         </div>
-        <Button className="w-full" onClick={onGetScenario}>
-          Get Random Scenario
-        </Button>
+        <Button className="w-full my-2 flex gap-2 items-center justify-center" onClick={onGetScenario}>
+          <Shuffle className="w-4 h-4" />
+          Get Random Scenario        </Button>
       </CardContent>
     </Card>
   );

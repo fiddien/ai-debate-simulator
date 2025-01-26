@@ -1,4 +1,4 @@
-import { DEBATE_CONFIG, ROUND_NAMES } from "@/constants/debateConfig";
+import { DEBATE_CONFIG } from "@/constants/debateConfig";
 import { useClient } from "@/context/ClientContext";
 import { generateDebaterPrompt } from "@/lib/promptGenerator";
 import { DebateAreaProps, Message } from "@/types";
@@ -16,10 +16,11 @@ import { Loader2, MessageSquare } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { OverviewTab, OverviewItem } from "@/ui/overview-tab";
 import RenderPromptInput from "./RenderPromptInput";
-import { validateCitations, extractThinking, extractArguments } from "@/lib/utils";
+import { validateCitations, extractArguments } from "@/lib/utils";
+import { Slider } from "@/ui/slider";
 
 const getRoundName = (round: number) => {
-  return ROUND_NAMES[round - 1] || "Debate Completed";
+  return `Round ${round}`;
 };
 
 
@@ -36,6 +37,7 @@ export default function StructuredDebateArea({
   const cardRef = React.useRef<HTMLDivElement>(null);
   const [prompts, setPrompts] = useState(DEBATE_CONFIG.PROMPTS.DEBATE);
   const latestMessagesRef = React.useRef(messages);
+  const [maxRounds, setMaxRounds] = useState(DEBATE_CONFIG.NUM_ROUNDS);
 
   // Update ref when messages change
   useEffect(() => {
@@ -70,7 +72,7 @@ export default function StructuredDebateArea({
       !isRoundComplete(currentRound) &&
       !isGenerating &&
       hasModelsAssigned() &&
-      currentRound <= ROUND_NAMES.length
+      currentRound <= maxRounds
     );
   };
 
@@ -147,7 +149,7 @@ export default function StructuredDebateArea({
 
   // Split the round progression into a separate function
   const handleNextRound = () => {
-    if (currentRound < ROUND_NAMES.length) {
+    if (currentRound < maxRounds) {
       setCurrentRound(prev => prev + 1);
       setActiveTab((currentRound + 1).toString());
       scrollToTop();
@@ -170,7 +172,7 @@ export default function StructuredDebateArea({
   };
 
   const getOverviewItems = (): OverviewItem[] => {
-    return Array.from({ length: ROUND_NAMES.length }, (_, i) => i + 1)
+    return Array.from({ length: maxRounds }, (_, i) => i + 1)
       .map((round) => {
         const roundMessages = getMessagesForRound(round);
         if (roundMessages.length === 0) return null;
@@ -197,7 +199,7 @@ export default function StructuredDebateArea({
       .filter((item): item is OverviewItem => item !== null);
   };
 
-  const canProgress = currentRound < DEBATE_CONFIG.MAX_STAGES;
+  const canProgress = currentRound < DEBATE_CONFIG.MAX_ROUNDS;
 
   const handlePromptChange = (key: string, value: string | Record<number, string>) => {
     setPrompts((prev) => ({
@@ -212,6 +214,18 @@ export default function StructuredDebateArea({
       <Card className="mb-6" ref={cardRef}>
         <CardHeader>
             <CardTitle>Structured Debate</CardTitle>
+            <div className="flex items-center gap-4 mt-4">
+              <span className="text-sm">Max Rounds:</span>
+              <Slider
+                defaultValue={[maxRounds]}
+                min={1}
+                max={10}
+                step={1}
+                onValueChange={([value]) => setMaxRounds(value)}
+                className="w-[200px]"
+              />
+              <span className="text-sm">{maxRounds}</span>
+            </div>
         </CardHeader>
         <CardContent>
           <Tabs
@@ -222,7 +236,7 @@ export default function StructuredDebateArea({
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
               {Array.from(
-                { length: ROUND_NAMES.length },
+                { length: maxRounds },
                 (_, i) => i + 1
               ).map((round) => (
                 <TabsTrigger
@@ -245,7 +259,7 @@ export default function StructuredDebateArea({
                 />
               </div>
             </TabsContent>
-            {Array.from({ length: ROUND_NAMES.length }, (_, i) => i + 1).map(
+            {Array.from({ length: maxRounds }, (_, i) => i + 1).map(
               (round) => (
                 <TabsContent key={round} value={round.toString()}>
                   <div className="space-y-4">
@@ -314,7 +328,7 @@ export default function StructuredDebateArea({
             </Button>
           )}
 
-          {currentRound <= DEBATE_CONFIG.MAX_STAGES && (
+          {currentRound <= DEBATE_CONFIG.MAX_ROUNDS && (
             <Button
               variant="default"
               disabled={!canRunRound()}
@@ -332,7 +346,7 @@ export default function StructuredDebateArea({
           )}
 
           {isRoundComplete(currentRound) &&
-            currentRound < ROUND_NAMES.length && (
+            currentRound < maxRounds && (
               <Button
                 variant="outline"
                 onClick={handleNextRound}
@@ -341,7 +355,7 @@ export default function StructuredDebateArea({
               </Button>
             )}
 
-          {currentRound > ROUND_NAMES.length && (
+          {currentRound > maxRounds && (
             <Button variant="default" disabled>
               Debate Completed
             </Button>

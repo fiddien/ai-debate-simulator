@@ -12,7 +12,7 @@ interface ProgressIndicatorProps {
 const ProgressIndicator = ({ steps, onStepClick }: ProgressIndicatorProps) => {
   return (
     <div className="progress-indicator">
-      <ul className="progress-indicator-list">
+      <ul className="progress-indicator-list hover:cursor-pointer">
         {steps.map((step, index) => (
           <li
             key={index}
