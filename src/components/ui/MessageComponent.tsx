@@ -48,7 +48,7 @@ const ThinkingSection = ({ content }: { content: string }) => {
         {isExpanded ? <FaChevronDown size={12} /> : <FaChevronRight size={12} />}
         Thinking Process
       </button>
-      <div className={`${isExpanded ? 'block' : 'hidden'} bg-gray-50 border-l-2 px-1 border-gray-300 rounded-md`}>
+      <div className={`${isExpanded ? 'block' : 'hidden'} border-2 px-2 border-gray-300 rounded-md`}>
         <ReactMarkdown
           remarkPlugins={[remarkBreaks]}
           components={{
@@ -64,7 +64,13 @@ const ThinkingSection = ({ content }: { content: string }) => {
   );
 };
 
-export const MessageComponent = ({ content, side, model, name }: Message) => {
+type MessageComponentProps = {
+  content: string;
+  side: "left" | "right";
+  name: string;
+} & React.HTMLAttributes<HTMLDivElement>;
+
+export const MessageComponent = ({ content, side, name, ...props }: MessageComponentProps) => {
   const [copied, setCopied] = useState(false);
   const processedSections = processContent(content);
 
@@ -75,7 +81,7 @@ export const MessageComponent = ({ content, side, model, name }: Message) => {
   };
 
   return (
-    <div className={`flex gap-3 mb-4`}>
+    <div className={`flex gap-3 mb-4`} {...props}>
       {/* Chat bubble */}
       <div className={`flex-1 w-full`}>
         <div className={`rounded-lg px-4 py-2 ${side === "right"
@@ -84,7 +90,7 @@ export const MessageComponent = ({ content, side, model, name }: Message) => {
           }`}>
           {/* Avatar and Name container */}
           <div className="flex items-center gap-3 mb-2">
-            <div className={`px-4 h-10 rounded-full flex items-center justify-center font-bold
+            <div className={`mt-2 p-4 h-6 rounded-full flex items-center justify-center font-bold
               ${side === "right" ? "bg-amber-100 text-amber-600" : "bg-teal-100 text-teal-600"}`}
             >
               {name}

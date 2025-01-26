@@ -201,8 +201,6 @@ export default function StructuredDebateArea({
       .filter((item): item is OverviewItem => item !== null);
   };
 
-  const canProgress = currentRound < DEBATE_CONFIG.MAX_ROUNDS;
-
   const handlePromptChange = (key: string, value: string | Record<number, string>) => {
     setPrompts((prev) => ({
       ...prev,

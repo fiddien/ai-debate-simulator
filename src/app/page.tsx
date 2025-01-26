@@ -5,16 +5,15 @@ import InitialResponseArea from "@/components/debate/InitialResponseArea";
 import JudgementArea from "@/components/debate/JudgementArea";
 import ScenarioCard from "@/components/debate/ScenarioArea";
 import SetupArea from "@/components/debate/SetupArea";
-import StructuredDebateArea from "@/components/debate/StructuredDebateArea";
+import StructuredDebateArea from "@/components/debate/DebateArea";
 import MainLayout from "@/components/layout/MainLayout";
 import ProgressIndicator from "@/components/ui/ProgressIndicator";
-import { DEBATE_CONFIG } from "@/constants/debateConfig";
 import { defaultApiSetup } from "@/constants/setupConstants";
 import { ClientProvider } from "@/context/ClientContext";
 import { useDebate } from "@/context/DebateContext";
 import { getRandomScenario } from "@/lib/data";
 import { ApiSetup } from "@/types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Home() {
   const {
@@ -24,8 +23,6 @@ export default function Home() {
     setMessages,
     debateMessages,
     setDebateMessages,
-    debateUnsMessages,
-    setDebateUnsMessages,
     judgement,
     setJudgement,
   } = useDebate();
@@ -34,7 +31,6 @@ export default function Home() {
   const [selectedLabel, setSelectedLabel] = useState<string>("proved");
   const [apiSetup, setApiSetup] = useState<ApiSetup>(defaultApiSetup);
   const [setupComplete, setSetupComplete] = useState(false);
-  const [prompts, setPrompts] = useState(DEBATE_CONFIG.PROMPTS);
 
   const handleLevelChange = (level: string) => {
     setSelectedLevel(level);
@@ -70,9 +66,9 @@ export default function Home() {
     setSetupComplete(true);
   };
 
-  useEffect(() => {
-    handleGetScenario();
-  }, []);
+  // useEffect(() => {
+  //   handleGetScenario();
+  // }, []);
 
   const steps = [
     { name: "Setup Models" },

@@ -18,9 +18,10 @@ import React, { useState } from "react";
 
 const SetupArea: React.FC<SetupAreaProps> = ({ onSetupComplete }) => {
   const { initializeClients, error: contextError } = useClient();
+  console.log(contextError);
+
   const [isInitializing, setIsInitializing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const [apiKeys, setApiKeys] = useState(defaultApiSetup.apiKeys);
   const [models, setDebaterModels] = useState(defaultApiSetup.models);
 

@@ -43,11 +43,7 @@ export default function JudgementArea({
 
   if (!currentScenario) return null;
 
-  const scrollToTop = () => {
-    cardRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const handlePromptChange = (key: string, value: string) => {
+  const handlePromptChange = (key: string, value: string | Record<number, string>) => {
     setPrompts((prev) => ({
       ...prev,
       [key]: value,
@@ -69,6 +65,10 @@ export default function JudgementArea({
       };
 
       const prompt = generateJudgePrompt(judgeScenario, debateMessages);
+      if (!clientManager) {
+        throw new Error("Client manager is not available");
+      }
+
       const response = await clientManager.generateResponse(
         apiSetup.models.judge,
         prompt
@@ -108,12 +108,8 @@ export default function JudgementArea({
             <div className="p-4 border rounded-lg bg-gray-50">
               {judgement ? (
                 <MessageComponent
-                  round={-1}
                   name={apiSetup.models.judge}
                   content={judgement}
-                  content_thinking=""
-                  content_argument=""
-                  model={apiSetup.models.judge}
                   side="left"
                 />
               ) : (

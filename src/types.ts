@@ -119,8 +119,6 @@ export interface Scenario {
     setMessages: (messages: Message[]) => void;
     debateMessages: Message[];
     setDebateMessages: (messages: Message[]) => void;
-    debateUnsMessages: Message[];
-    setDebateUnsMessages: (messages: Message[]) => void;
     judgement: string;
     setJudgement: (judgement: string) => void;
   }

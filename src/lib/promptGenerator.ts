@@ -49,12 +49,12 @@ export const generateDebaterPrompt = (
     .replace("{word_limit}", String(wordLimit));
   const userMessage1 = DEBATE_CONFIG.PROMPTS.DEBATE.USER_PROMPT_1
     .replace("{question}", question)
-    .replace("{answer_defending}", defendingAnswer)
-    .replace("{answer_opposing}", opposingAnswer);
+    .replace("{answer_defending}", yourAnswer)
+    .replace("{answer_opposing}", opponentAnswer);
   const assistantMessage = DEBATE_CONFIG.PROMPTS.DEBATE.ASSISTANT_PROMPT
     .replace("{question}", question)
-    .replace("{answer_defending}", defendingAnswer)
-    .replace("{answer_opposing}", opposingAnswer);
+    .replace("{answer_defending}", yourAnswer)
+    .replace("{answer_opposing}", opponentAnswer);
   const userMessage2 = DEBATE_CONFIG.PROMPTS.DEBATE.USER_PROMPT_2
     .replace("{situation}", scenario.situation)
     .replace("{transcript}", transcript)
