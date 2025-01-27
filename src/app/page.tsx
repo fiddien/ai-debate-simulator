@@ -4,16 +4,18 @@ import FilterMenu from "@/components/debate/FilterScenarioArea";
 import InitialResponseArea from "@/components/debate/InitialResponseArea";
 import JudgementArea from "@/components/debate/JudgementArea";
 import ScenarioCard from "@/components/debate/ScenarioArea";
+import NewScenarioCard from "@/components/debate/NewScenarioCard";
 import SetupArea from "@/components/debate/SetupArea";
-import StructuredDebateArea from "@/components/debate/DebateArea";
+import DebateArea from "@/components/debate/DebateArea";
 import MainLayout from "@/components/layout/MainLayout";
 import ProgressIndicator from "@/components/ui/ProgressIndicator";
-import { defaultApiSetup } from "@/constants/setupConstants";
+import { defaultApiSetup } from "@/constants/setupConstantsTemp";
 import { ClientProvider } from "@/context/ClientContext";
 import { useDebate } from "@/context/DebateContext";
 import { getRandomScenario } from "@/lib/data";
 import { ApiSetup } from "@/types";
 import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 
 export default function Home() {
   const {
@@ -31,6 +33,7 @@ export default function Home() {
   const [selectedLabel, setSelectedLabel] = useState<string>("proved");
   const [apiSetup, setApiSetup] = useState<ApiSetup>(defaultApiSetup);
   const [setupComplete, setSetupComplete] = useState(false);
+  const [scenarioMode, setScenarioMode] = useState<"boardgame" | "custom">("boardgame");
 
   const handleLevelChange = (level: string) => {
     setSelectedLevel(level);
@@ -105,21 +108,44 @@ export default function Home() {
             </div>
           )}
 
-          <div id="filter">
-            <FilterMenu
-              selectedLevel={selectedLevel}
-              selectedLabel={selectedLabel}
-              onLevelChange={handleLevelChange}
-              onLabelChange={handleLabelChange}
-              onGetScenario={handleGetScenario}
-            />
+          <div id="scenario-selection" className="mb-6">
+            <Tabs value={scenarioMode} onValueChange={(v) => setScenarioMode(v as "boardgame" | "custom")}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="boardgame">BoardgameQA Dataset</TabsTrigger>
+                <TabsTrigger value="custom">Create Your Own</TabsTrigger>
+              </TabsList>
+              <TabsContent value="boardgame">
+                <div id="filter">
+                  <FilterMenu
+                    selectedLevel={selectedLevel}
+                    selectedLabel={selectedLabel}
+                    onLevelChange={handleLevelChange}
+                    onLabelChange={handleLabelChange}
+                    onGetScenario={handleGetScenario}
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="custom">
+                <NewScenarioCard
+                  onSave={(scenario) => {
+                    setCurrentScenario(scenario);
+                    setDebateMessages([]);
+                    setJudgement("");
+                  }}
+                />
+              </TabsContent>
+            </Tabs>
           </div>
 
-          {currentScenario ? (
+          {currentScenario && (
             <>
-              <div id="scenario">
-                <ScenarioCard scenario={currentScenario} />
-              </div>
+            <div id="scenario">
+              <ScenarioCard
+                scenario={currentScenario}
+                onScenarioChange={() => setScenarioMode("boardgame")}
+              />
+            </div>
               <div id="debate">
                 <InitialResponseArea
                   messages={messages}
@@ -127,7 +153,7 @@ export default function Home() {
                   setMessages={setMessages}
                   apiSetup={apiSetup}
                 />
-                <StructuredDebateArea
+                <DebateArea
                   messages={debateMessages}
                   setMessages={setDebateMessages}
                   debateScenario={currentScenario}
@@ -143,12 +169,6 @@ export default function Home() {
                 />
               </div>
             </>
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-lg text-gray-600">
-                No scenarios found for the selected filter.
-              </p>
-            </div>
           )}
         </div>
       </MainLayout>

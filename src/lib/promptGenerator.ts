@@ -7,7 +7,7 @@ export const generateInitialResponsePrompt = (scenario: DebateScenario): PromptM
 ${question}
 What should I do?`;
   return [
-    {"role": "user", "content": userMessage}
+    { "role": "user", "content": userMessage }
   ]
 };
 
@@ -21,7 +21,7 @@ const getOpponentAnswer = (label: string, answer_options: string[]): string => {
 export const generateDebaterPrompt = (
   scenario: DebateScenario,
   messages: Message[],
-  name: string,
+  name: "A" | "B",
   round: number,
 ): PromptMessage[] => {
   const transcript = formatDebateHistory(messages);
@@ -41,7 +41,8 @@ export const generateDebaterPrompt = (
   const yourAnswer = name === "A" ? defendingAnswer : opposingAnswer;
   const opponentAnswer = name === "A" ? opposingAnswer : defendingAnswer;
   const thinkingInstruction = DEBATE_CONFIG.PROMPTS.DEBATE.THINKING_ADVICE[round];
-  const newArgumentRequest = DEBATE_CONFIG.PROMPTS.DEBATE.NEW_ARGUMENT_REQUEST[round].replace("{question}", question).replace("{answer_defending}", yourAnswer);
+  const newArgumentRequest = DEBATE_CONFIG.PROMPTS.DEBATE.NEW_ARGUMENT_REQUEST[round]
+    .replace("{question}", question).replace("{answer_defending}", yourAnswer);
 
   const systemMessage = DEBATE_CONFIG.PROMPTS.DEBATE.SYSTEM_PROMPT
     .replace("{name}", name)
@@ -60,34 +61,40 @@ export const generateDebaterPrompt = (
     .replace("{transcript}", transcript)
     .replace("{new_argument_request}", newArgumentRequest)
     .replace("{thinking_advice}", thinkingInstruction);
+
+  const position = name === "A" ? scenario.debaterA_position : scenario.debaterB_position;
+  const prompt = `${systemMessage}
+${position ? `Your position/argument is: ${position}` : ""}
+${scenario.situation}
+${transcript}`;
+
   return [
-    {"role": "system", "content": systemMessage.trim()},
-    {"role": "user", "content": userMessage1.trim()},
-    {"role": "assistant", "content": assistantMessage.trim()},
-    {"role": "user", "content": userMessage2.trim()}
+    { "role": "system", "content": systemMessage.trim() },
+    { "role": "user", "content": userMessage1.trim() },
+    { "role": "assistant", "content": assistantMessage.trim() },
+    { "role": "user", "content": userMessage2.trim() }
   ]
 };
 
 export const generateBaselinePrompt = (
   scenario: DebateScenario,
   prompts = DEBATE_CONFIG.PROMPTS.BASELINE
-) => {
-
+): PromptMessage[] => {
   const answerLabels = scenario.answer_options.map((_, i) => String.fromCharCode(65 + i)); // A, B, C, etc.
   const answerOptions = scenario.answer_options.map((option, i) => `- ${answerLabels[i]}: ${option}`).join("\n");
 
-  const messages = [
+  const messages: PromptMessage[] = [
     {
-      role: "system",
+      role: "system" as const,
       content: prompts.SYSTEM_PROMPT_BASELINE.trim(),
     },
     {
-      role: "user",
+      role: "user" as const,
       content: prompts.USER_PROMPT_BASELINE
         .replace("{situation}", scenario.situation)
         .replace("{question}", scenario.question)
         .replace("{answer_options}", answerOptions)
-        .replace("{answer_labels}", answerLabels).trim()
+        .replace("{answer_labels}", answerLabels.join("|")).trim()
     },
   ];
 
@@ -115,10 +122,10 @@ export const generateJudgePrompt = (
 export const formatDebateHistory = (messages: Message[]): string => {
   return messages.length > 0
     ? messages
-        .filter((m) => m.round > 0)
-        .map((m) =>
-          `${m.name}: ${m.content_argument}`
-        )
-        .join("\n\n")
+      .filter((m) => m.round > 0)
+      .map((m) =>
+        `${m.name}: ${m.content_argument}`
+      )
+      .join("\n\n")
     : "";
-  };
+};

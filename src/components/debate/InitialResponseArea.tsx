@@ -38,7 +38,7 @@ export default function InitialResponseArea({
   const [generatingModel, setGeneratingModel] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("overview");
-  const [prompts, setPrompts] = useState(DEBATE_CONFIG.PROMPTS.BASELINE);
+  const [prompts, setPrompts] = useState<{ SYSTEM_PROMPT_BASELINE: string; USER_PROMPT_BASELINE: string }>(DEBATE_CONFIG.PROMPTS.BASELINE);
 
   const initialResponses = messages.filter((msg) => msg.round === 0);
 
@@ -60,6 +60,12 @@ export default function InitialResponseArea({
     );
     if (!provider) {
       setError("No API provider configured");
+      setGeneratingModel(null);
+      return;
+    }
+
+    if (!clientManager) {
+      setError("Client manager is not available");
       setGeneratingModel(null);
       return;
     }
@@ -122,7 +128,7 @@ export default function InitialResponseArea({
   const handlePromptChange = (key: string, value: string | Record<number, string>) => {
     setPrompts((prev) => ({
       ...prev,
-      [key]: value,
+      [key]: typeof value === 'string' ? value : JSON.stringify(value),
     }));
   };
 
@@ -183,7 +189,7 @@ export default function InitialResponseArea({
                   <label className="block text-sm font-semibold mb-2">{key}</label>
                   <RenderPromptInput
                     promptKey={key}
-                    value={prompts[key]}
+                    value={prompts[key as keyof typeof prompts]}
                     handlePromptChange={handlePromptChange}
                   />
                 </div>

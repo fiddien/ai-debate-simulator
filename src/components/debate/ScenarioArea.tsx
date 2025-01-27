@@ -3,9 +3,12 @@
 import { DebateScenario } from "@/types";
 import { Badge } from "@/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/select";
+import { useState, useEffect } from "react";
 
 interface ScenarioCardProps {
   scenario: DebateScenario;
+  onScenarioChange?: (updatedScenario: DebateScenario) => void;
 }
 
 const highlightText = (text: string) => {
@@ -25,31 +28,31 @@ const highlightText = (text: string) => {
   return highlightedText;
 };
 
-const getDebateSettings = (label: string) => {
-  switch (label.toLowerCase()) {
-    case 'proved':
-      return { A: 'proved', B: 'disproved' };
-    case 'disproved':
-      return { A: 'disproved', B: 'unknown' };
-    case 'unknown':
-      return { A: 'unknown', B: 'proved' };
-    default:
-      return { A: 'unknown', B: 'unknown' };
-  }
-};
+export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCardProps) {
+  const [editedScenario, setEditedScenario] = useState(scenario);
 
-export default function ScenarioCard({ scenario }: ScenarioCardProps) {
-  const debateSettings = getDebateSettings(scenario.label);
+  // Update when scenario changes
+  useEffect(() => {
+    setEditedScenario(scenario);
+  }, [scenario]);
+
+  const handleDebaterPositionChange = (debater: 'A' | 'B', answer: string) => {
+    const position = `The answer is ${answer}`;
+    const updatedScenario = {
+      ...editedScenario,
+      [`debater${debater}_position`]: position,
+    };
+    setEditedScenario(updatedScenario);
+    onScenarioChange?.(updatedScenario);
+  };
 
   return (
     <Card className="mb-6">
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>Scenario</span>
-        </CardTitle>
+        <CardTitle>Debate Scenario</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Scenario Section */}
+        {/* Scenario Details Section */}
         <div className="space-y-4">
           <div>
             <span className="font-medium">Situation: </span>
@@ -66,31 +69,83 @@ export default function ScenarioCard({ scenario }: ScenarioCardProps) {
               {scenario.question}
             </span>
           </div>
+        </div>
 
-          <div>
-            <span className="font-medium">Level: </span>
-            {scenario.level}
-          </div>
+        {/* Debate Positions Section */}
+        <div className="border-t pt-4">
+          <h3 className="font-medium mb-4">Assign Debate Positions</h3>
+          <div className="grid gap-4">
+            {/* Debater A Position */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="font-medium">Debater A:</span>
+                <Select
+                  value={editedScenario.debaterA_position?.split('The answer is ')[1] || ''}
+                  onValueChange={(value) => handleDebaterPositionChange('A', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select position..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {scenario.answer_options.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {editedScenario.debaterA_position && (
+                <div className="bg-teal-50 p-2 rounded">
+                  {editedScenario.debaterA_position}
+                </div>
+              )}
+            </div>
 
-          <div className="flex items-center gap-2">
-            <span className="font-medium">Answer: </span>
-            <div className="flex flex-wrap gap-2">
-              <Badge>
-                {scenario.label}
-              </Badge>
+            {/* Debater B Position */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="font-medium">Debater B:</span>
+                <Select
+                  value={editedScenario.debaterB_position?.split('The answer is ')[1] || ''}
+                  onValueChange={(value) => handleDebaterPositionChange('B', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select position..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {scenario.answer_options.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {editedScenario.debaterB_position && (
+                <div className="bg-amber-50 p-2 rounded">
+                  {editedScenario.debaterB_position}
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Debate Settings Section */}
-        <div className="flex gap-4">
-          <span className="font-medium">Debate Settings:</span>
-          <Badge variant="outline">
-            A: {debateSettings.A}
-          </Badge>
-          <Badge variant="outline">
-            B: {debateSettings.B}
-          </Badge>
+        {/* Current Assignments Display */}
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-medium mb-2">Current Assignments</h4>
+          <div className="flex gap-4">
+            {editedScenario.debaterA_position && (
+              <Badge variant="outline">
+                A: {editedScenario.debaterA_position.split('The answer is ')[1]}
+              </Badge>
+            )}
+            {editedScenario.debaterB_position && (
+              <Badge variant="outline">
+                B: {editedScenario.debaterB_position.split('The answer is ')[1]}
+              </Badge>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -51,6 +51,10 @@ export interface Scenario {
     label: string;
     id: string;
     level: string;
+
+    isEditing?: boolean;
+    debaterA_position?: string;  // Add these new fields
+    debaterB_position?: string;
   }
 
   export interface DebateContext {
@@ -116,9 +120,9 @@ export interface Scenario {
     currentScenario: DebateScenario | null;
     setCurrentScenario: (scenario: DebateScenario | null) => void;
     messages: Message[];
-    setMessages: (messages: Message[]) => void;
+    setMessages: (messages: Message[] | ((prev: Message[]) => Message[])) => void;
     debateMessages: Message[];
-    setDebateMessages: (messages: Message[]) => void;
+    setDebateMessages: (messages: Message[] | ((prev: Message[]) => Message[])) => void;
     judgement: string;
     setJudgement: (judgement: string) => void;
   }

@@ -16,14 +16,13 @@ export function validateCitations(text: string, situation: string): string {
 
   const cleanedSituation = removePunctuation(situation)
 
-  const validateQuote = (substring: string, ...args: any[]): string => {
-    const content = args[0].trim()
+  const validateQuote = (content: string): string => {
     const cleanedContent = removePunctuation(content)
     const tag = cleanedSituation.includes(cleanedContent) ? "v_quote" : "u_quote"
     return `<${tag}>${content}</${tag}>`
   }
 
-  return text.replace(/<quote>(.*?)<\/quote>/g, validateQuote)
+  return text.replace(/<quote>(.*?)<\/quote>/g, (_, captured) => validateQuote(captured.trim()))
 }
 
 export function extractTagContent(text: string, tagName: string): string[] {

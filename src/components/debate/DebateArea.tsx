@@ -4,7 +4,7 @@ import { DEBATE_CONFIG } from "@/constants/debateConfig";
 import { useClient } from "@/context/ClientContext";
 import { generateDebaterPrompt } from "@/lib/promptGenerator";
 import { extractArguments, validateCitations } from "@/lib/utils";
-import { DebateAreaProps, Message } from "@/types";
+import { DebateAreaProps, Message, DebateScenario } from "@/types";
 import { Button } from "@/ui/button";
 import {
   Card,
@@ -20,17 +20,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import { Loader2, MessageSquare } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import RenderPromptInput from "./RenderPromptInput";
+import ScenarioCard from "./ScenarioArea";
 
 const getRoundName = (round: number) => {
   return `Round ${round}`;
 };
 
-
-export default function StructuredDebateArea({
+export default function DebateArea({
   messages,
   setMessages,
   debateScenario,
   apiSetup,
+  rounds = 3,
 }: DebateAreaProps) {
   const { clientManager } = useClient();
   const [currentRound, setCurrentRound] = useState(1);
@@ -40,7 +41,7 @@ export default function StructuredDebateArea({
   const [prompts, setPrompts] = useState(DEBATE_CONFIG.PROMPTS.DEBATE);
   const latestMessagesRef = React.useRef(messages);
   const [maxRounds, setMaxRounds] = useState(DEBATE_CONFIG.NUM_ROUNDS);
-
+  const [currentScenario, setCurrentScenario] = useState<DebateScenario>(debateScenario);
 
   // Update ref when messages change
   useEffect(() => {
@@ -88,7 +89,7 @@ export default function StructuredDebateArea({
     console.log("Generating response for", name, "using model", model, "using latest messages", currentMessages);
 
     const prompt = generateDebaterPrompt(
-      debateScenario,
+      currentScenario,
       currentMessages,
       name,
       currentRound,
@@ -99,14 +100,14 @@ export default function StructuredDebateArea({
         throw new Error("Client manager is not available");
       }
       const messageContent = await clientManager.generateResponse(model, prompt);
-      const validatedContent = validateCitations(messageContent, debateScenario.situation);
+      const validatedContent = validateCitations(messageContent, currentScenario.situation);
       const contentArgument = extractArguments(validatedContent);
 
       return {
         model: model,
         round: currentRound,
         name: name,
-        content: messageContent,
+        content: validatedContent,
         content_thinking: "",
         content_argument: contentArgument,
         side: name === "A" ? "left" : "right",
@@ -217,15 +218,20 @@ export default function StructuredDebateArea({
     }));
   };
 
+  const handleScenarioChange = (updated: DebateScenario) => {
+    // Make sure we're creating a new object reference
+    const newScenario = { ...updated };
+    setCurrentScenario(newScenario);
+    setMessages([]);
+  };
+
   return (
-    <div>
-      {/* Structured Debate Card */}
+    <div className="flex flex-col gap-4">
       <Card className="mb-6" ref={cardRef}>
         <CardHeader>
           <CardTitle>AI Debate</CardTitle>
         </CardHeader>
         <CardContent>
-          {/* Round num slider */}
           <div className="flex mb-6 items-center gap-4 mt-4">
             <span className="text-sm">Max Rounds:</span>
             <Slider
@@ -273,9 +279,6 @@ export default function StructuredDebateArea({
               (round) => (
                 <TabsContent key={round} value={round.toString()}>
                   <div className="space-y-4">
-                    {/* <div className="text-sm text-gray-500 font-medium mb-4">
-                      {getRoundName(round)}
-                    </div> */}
                     <div className="p-4 border rounded-lg bg-gray-50">
                       {getMessagesForRound(round).length > 0 ? (
                         getMessagesForRound(round).map((msg, i) => (
@@ -337,23 +340,6 @@ export default function StructuredDebateArea({
               ← Previous
             </Button>
           )}
-
-          {/* {currentRound <= DEBATE_CONFIG.MAX_ROUNDS && (
-            <Button
-              variant="default"
-              disabled={!canRunRound()}
-              onClick={runRound}
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Running Round {currentRound}...
-                </>
-              ) : (
-                <>Run Round {currentRound}</>
-              )}
-            </Button>
-          )} */}
 
           {isRoundComplete(currentRound) &&
             currentRound < maxRounds && (
