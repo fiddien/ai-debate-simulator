@@ -18,7 +18,6 @@ export interface Scenario {
     round: number;
     name: string;
     content: string;
-    content_thinking: string;
     content_argument: string;
     side: "left" | "right";
     model: string;

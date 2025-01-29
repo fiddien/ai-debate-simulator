@@ -13,13 +13,15 @@ import SetupArea from "@/components/debate/SetupArea";
 import DebateArea from "@/components/debate/DebateArea";
 import MainLayout from "@/components/layout/MainLayout";
 import ProgressIndicator from "@/components/ui/ProgressIndicator";
-import { defaultApiSetup } from "@/constants/setupConstantsTemp";
+import { defaultApiSetup } from "@/constants/setupConstants";
 import { ClientProvider } from "@/context/ClientContext";
 import { useDebate } from "@/context/DebateContext";
 import { getRandomScenario } from "@/lib/data";
 import { ApiSetup, DebateScenario } from "@/types";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
+import { Button } from "@/ui/button";
+import { DEBATE_CONFIG } from "@/constants/debateConfig";
 
 export default function Home() {
   const {
@@ -37,7 +39,7 @@ export default function Home() {
   const [selectedLabel, setSelectedLabel] = useState<string>("proved");
   const [apiSetup, setApiSetup] = useState<ApiSetup>(defaultApiSetup);
   const [setupComplete, setSetupComplete] = useState(false);
-  const [scenarioMode, setScenarioMode] = useState<"boardgame" | "custom">("boardgame");
+  const [scenarioMode, setScenarioMode] = useState<"boardgame" | "custom">("custom");
 
   const handleLevelChange = (level: string) => {
     setSelectedLevel(level);
@@ -76,6 +78,30 @@ export default function Home() {
   // useEffect(() => {
   //   handleGetScenario();
   // }, []);
+
+
+
+  const handleDownload = () => {
+    const timestamp = new Date().toISOString();
+    const data = {
+      timestamp,
+      models: apiSetup.models,
+      currentScenario,
+      baselineMessages: messages,
+      debateConfig: DEBATE_CONFIG,
+      debateMessages,
+      judgement,
+    };
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `debate_result_${timestamp.replace(/[:.]/g, '-')}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const steps = [
     { name: "Setup" },
@@ -199,6 +225,14 @@ export default function Home() {
                 onSubmit={handleSubmitJudgement}
                 apiSetup={apiSetup}
               />
+            </div>
+            <div className="text-center mb-6">
+              <Button
+                variant="default"
+                onClick={handleDownload}
+              >
+                Download Result
+              </Button>
             </div>
             </>
           )}

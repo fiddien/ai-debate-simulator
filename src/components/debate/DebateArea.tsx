@@ -124,7 +124,6 @@ export default function DebateArea({
         round: currentRound,
         name: name,
         content: validatedContent,
-        content_thinking: "",
         content_argument: contentArgument,
         side: name === "A" ? "left" : "right",
       };

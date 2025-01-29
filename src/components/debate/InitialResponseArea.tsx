@@ -83,7 +83,6 @@ export default function InitialResponseArea({
       const newMessage: Message = {
         model: model,
         content: messageContent,
-        content_thinking: "",
         content_argument: "",
         side: "left",
         name: model,
