@@ -5,7 +5,7 @@ import { Save } from "lucide-react";
 import React, { useState } from "react";
 
 interface RenderPromptInputProps {
-  promptKey: string; // renamed from key to avoid conflicts
+  promptKey: string;
   value: string | Record<number, string>;
   handlePromptChange: (key: string, value: string | Record<number, string>) => void;
 }

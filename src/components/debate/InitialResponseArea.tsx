@@ -22,7 +22,7 @@ import RenderPromptInput from "./RenderPromptInput";
 
 interface InitialResponseAreaProps {
   messages: Message[];
-  setMessages: (messages: Message[]) => void;
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   scenario: DebateScenario;
   apiSetup: ApiSetup;
 }
@@ -90,7 +90,7 @@ export default function InitialResponseArea({
         round: 0,
       };
 
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setMessages(prevMessages => [...prevMessages, newMessage]);
       setActiveTab(model);
     } catch (error) {
       const errorMessage =
@@ -118,11 +118,11 @@ export default function InitialResponseArea({
         return {
           id: model,
           title: model,
-          content: response.content ?? "",
+          content: response.content,
           onClick: () => setActiveTab(model)
-        };
+        } as OverviewItem;
       })
-      .filter((item): item is OverviewItem => item !== null) as OverviewItem[];
+      .filter((item): item is OverviewItem => item !== null);
   };
 
   const handlePromptChange = (key: string, value: string | Record<number, string>) => {
