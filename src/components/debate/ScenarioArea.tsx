@@ -6,6 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/select";
 import { useState, useEffect } from "react";
 
+const DEBATERS = ['A', 'B'] as const;
+type Debater = typeof DEBATERS[number];
+
 interface ScenarioCardProps {
   scenario: DebateScenario;
   onScenarioChange?: (updatedScenario: DebateScenario) => void;
@@ -36,7 +39,7 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
     setEditedScenario(scenario);
   }, [scenario]);
 
-  const handleDebaterPositionChange = (debater: 'A' | 'B', answer: string) => {
+  const handleDebaterPositionChange = (debater: Debater, answer: string) => {
     const updatedScenario = {
       ...editedScenario,
       [`debater${debater}_position`]: answer,
@@ -84,54 +87,33 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
         <div className="border-t pt-4">
           <h3 className="font-medium mb-4">Assign Debate Positions</h3>
           <div className="grid gap-4">
-            {/* Debater A Position */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="font-medium">Debater A:</span>
-                <Select
-                  value={editedScenario.debaterA_position || ''}
-                  onValueChange={(value) => handleDebaterPositionChange('A', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select position..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {scenario.answer_options.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {option}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {DEBATERS.map((debater) => (
+              <div key={`debater-${debater}`} className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">Debater {debater}:</span>
+                  <Select
+                    value={editedScenario[`debater${debater}_position`] || ''}
+                    onValueChange={(value) => handleDebaterPositionChange(debater, value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select position..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {scenario.answer_options.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-            </div>
-
-            {/* Debater B Position */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="font-medium">Debater B:</span>
-                <Select
-                  value={editedScenario.debaterB_position || ''}
-                  onValueChange={(value) => handleDebaterPositionChange('B', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select position..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {scenario.answer_options.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {option}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
         {/* Current Assignments Display */}
-        <div className="bg-gray-50 p-4 rounded-lg">
+        {/* <div className="bg-gray-50 p-4 rounded-lg">
           <h4 className="font-medium mb-2">Current Assignments</h4>
           <div className="flex gap-4">
             {editedScenario.debaterA_position && (
@@ -145,7 +127,7 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
               </Badge>
             )}
           </div>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );
