@@ -49,7 +49,7 @@ export default function FilterMenu({
   };
 
   return (
-    <Card className="mb-6">
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Filter className="w-5 h-5" />

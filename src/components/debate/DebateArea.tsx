@@ -48,6 +48,15 @@ export default function DebateArea({
     latestMessagesRef.current = messages;
   }, [messages]);
 
+  // Add effect to reset state when scenario changes
+  useEffect(() => {
+    setCurrentRound(1);
+    setActiveTab("overview");
+    setIsGenerating(false);
+    setMaxRounds(DEBATE_CONFIG.NUM_ROUNDS);
+    setMessages([]); // Clear messages
+  }, [debateScenario, setMessages]); // Add debateScenario as dependency
+
   const scrollToTop = () => {
     cardRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -124,12 +133,12 @@ export default function DebateArea({
       const responseA = await generateDebaterResponse("A", "debaterA");
       if (responseA) {
         await new Promise<void>((resolve) => {
-            setMessages((prev: Message[]) => {
+          setMessages((prev: Message[]) => {
             const newMessages = [...prev, responseA as Message];
             latestMessagesRef.current = newMessages; // Update ref immediately
             resolve();
             return newMessages;
-            });
+          });
         });
 
         // Small delay to ensure state has propagated
@@ -285,15 +294,40 @@ export default function DebateArea({
                           <MessageComponent key={i} {...msg} />
                         ))
                       ) : (
-                        <div className="flex items-center justify-center p-8 text-gray-500">
-                          <MessageSquare className="mr-2" />
-                          {round > currentRound
-                            ? "This round is not yet available"
-                            : "No messages in this round yet"}
+                        <div className="flex-row gap-2 p-8">
+                          <div className="flex items-center justify-center p-4 text-gray-500">
+                            <MessageSquare className="mr-2" />
+                            {round > currentRound
+                              ? "This round is not yet available"
+                              : "No messages in this round yet"}
+                          </div>
+                          {currentRound <= DEBATE_CONFIG.MAX_ROUNDS && (
+                            <div className="flex items-center justify-center">
+                              <Button
+                                variant="default"
+                                disabled={!canRunRound()}
+                                onClick={() => {
+                                  setActiveTab(currentRound.toString());
+                                  runRound();
+                                }}
+                              >
+                                {isGenerating ? (
+                                  <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Running Round {currentRound}...
+                                  </>
+                                ) : (
+                                  <>Run Round {currentRound}</>
+                                )}
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       )}
+
                     </div>
                   </div>
+
                 </TabsContent>
               )
             )}
@@ -354,26 +388,6 @@ export default function DebateArea({
           {currentRound > maxRounds && (
             <Button variant="default" disabled>
               Debate Completed
-            </Button>
-          )}
-
-          {currentRound <= DEBATE_CONFIG.MAX_ROUNDS && (
-            <Button
-              variant="default"
-              disabled={!canRunRound()}
-              onClick={() => {
-                setActiveTab(currentRound.toString());
-                runRound();
-              }}
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Running Round {currentRound}...
-                </>
-              ) : (
-                <>Run Round {currentRound}</>
-              )}
             </Button>
           )}
         </CardFooter>

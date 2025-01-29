@@ -74,20 +74,32 @@ export default function Home() {
   // }, []);
 
   const steps = [
-    { name: "Setup Models" },
-    { name: "Select Scenario" },
-    { name: "Initial Response" },
-    { name: "Models Debate" },
-    { name: "Give Judgement" },
+    { name: "Setup" },
+    { name: "Scenario" },
+    { name: "Debate Setting" },
+    { name: "Baseline" },
+    { name: "Debate" },
+    { name: "Judge" },
   ];
 
   const handleStepClick = (stepIndex: number) => {
-    const sections = ["setup", "filter", "scenario", "debate", "judgement"];
+    const sections = ["setup", "scenario-selection", "scenario", "baseline", "debate", "judgement"];
     const targetId = sections[stepIndex];
     const element = document.getElementById(targetId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
+  };
+
+  const resetDebateState = () => {
+    setMessages([]);
+    setDebateMessages([]);
+    setJudgement("");
+  };
+
+  const handleScenarioChange = (updatedScenario: DebateScenario) => {
+    setCurrentScenario(updatedScenario);
+    resetDebateState();
   };
 
   return (
@@ -103,16 +115,16 @@ export default function Home() {
           </div>
 
           {setupComplete && (
-            <div className="text-center py-4">
+            <div className="text-center mb-6">
               <p className="text-teal-600">Setup is complete!</p>
             </div>
           )}
 
           <div id="scenario-selection" className="mb-6">
             <Tabs value={scenarioMode} onValueChange={(v) => setScenarioMode(v as "boardgame" | "custom")}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="boardgame">BoardgameQA Dataset</TabsTrigger>
-                <TabsTrigger value="custom">Create Your Own</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-4 shadow-md">
+                <TabsTrigger value="boardgame" className="sm:py-3">BoardgameQA Dataset</TabsTrigger>
+                <TabsTrigger value="custom" className="sm:py-3">Create Your Own</TabsTrigger>
               </TabsList>
               <TabsContent value="boardgame">
                 <div id="filter">
@@ -143,31 +155,33 @@ export default function Home() {
             <div id="scenario">
               <ScenarioCard
                 scenario={currentScenario}
-                onScenarioChange={() => setScenarioMode("boardgame")}
+                onScenarioChange={handleScenarioChange}
               />
             </div>
-              <div id="debate">
-                <InitialResponseArea
-                  messages={messages}
-                  scenario={currentScenario}
-                  setMessages={setMessages}
-                  apiSetup={apiSetup}
-                />
-                <DebateArea
-                  messages={debateMessages}
-                  setMessages={setDebateMessages}
-                  debateScenario={currentScenario}
-                  apiSetup={apiSetup}
-                />
-              </div>
-              <div id="judgement">
-                <JudgementArea
-                  judgement={judgement}
-                  setJudgement={setJudgement}
-                  onSubmit={handleSubmitJudgement}
-                  apiSetup={apiSetup}
-                />
-              </div>
+            <div id="baseline">
+              <InitialResponseArea
+                messages={messages}
+                scenario={currentScenario}
+                setMessages={setMessages}
+                apiSetup={apiSetup}
+              />
+            </div>
+            <div id="debate">
+              <DebateArea
+                messages={debateMessages}
+                setMessages={setDebateMessages}
+                debateScenario={currentScenario}
+                apiSetup={apiSetup}
+              />
+            </div>
+            <div id="judgement">
+              <JudgementArea
+                judgement={judgement}
+                setJudgement={setJudgement}
+                onSubmit={handleSubmitJudgement}
+                apiSetup={apiSetup}
+              />
+            </div>
             </>
           )}
         </div>

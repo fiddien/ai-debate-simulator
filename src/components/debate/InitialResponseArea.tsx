@@ -138,6 +138,7 @@ export default function InitialResponseArea({
         <CardTitle>Initial AI Responses</CardTitle>
       </CardHeader>
       <CardContent>
+        <h4 className="text-lg mb-4">Get <i>normal</i> AI responses from selected models using the baseline prompt</h4>
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
@@ -150,7 +151,6 @@ export default function InitialResponseArea({
               <TabsTrigger
                 key={model}
                 value={model}
-                disabled={!hasModelResponded(model)}
               >
                 {model}
               </TabsTrigger>
@@ -179,6 +179,24 @@ export default function InitialResponseArea({
                   .map((msg, index) => (
                     <MessageComponent key={index} {...msg} />
                   ))}
+                {!hasModelResponded(model) && (
+                  <div className="flex items-center justify-center p-8">
+                    <Button
+                      variant="default"
+                      disabled={generatingModel !== null}
+                      onClick={() => fetchInitialResponse(model)}
+                    >
+                      {generatingModel === model ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Generating with {model}...
+                        </>
+                      ) : (
+                        <>Get {model} Response</>
+                      )}
+                    </Button>
+                  </div>
+                )}
               </div>
             </TabsContent>
           ))}
@@ -210,25 +228,6 @@ export default function InitialResponseArea({
             ← Back to Overview
           </Button>
         )}
-        {getUniqueModels().map((model) => (
-          <Button
-            key={model}
-            variant="default"
-            disabled={hasModelResponded(model) || generatingModel !== null}
-            onClick={() => fetchInitialResponse(model)}
-          >
-            {generatingModel === model ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating with {model}...
-              </>
-            ) : (
-              <>
-                {!hasModelResponded(model) && "→"} Get {model} Response
-              </>
-            )}
-          </Button>
-        ))}
       </CardFooter>
     </Card>
   );

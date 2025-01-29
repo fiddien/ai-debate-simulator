@@ -19,7 +19,7 @@ export default function NewScenarioCard({ onSave }: NewScenarioCardProps) {
     question: "",
     level: "basic",
     label: "unknown",
-    answer_options: [""],
+    answer_options: ["", ""],
     id: Date.now().toString(),
   });
 
@@ -89,7 +89,7 @@ export default function NewScenarioCard({ onSave }: NewScenarioCardProps) {
                 <Input
                   value={option}
                   onChange={(e) => updateAnswerOption(index, e.target.value)}
-                  placeholder={`Answer option ${index + 1}`}
+                  placeholder={`Option ${String.fromCharCode(65 + index)}`}
                 />
                 {newScenario.answer_options!.length > 1 && (
                   <Button
@@ -117,14 +117,15 @@ export default function NewScenarioCard({ onSave }: NewScenarioCardProps) {
 
         <div className="flex justify-end gap-2">
           <Button
-            variant="outline"
+            size="lg"
+            className="w-full"
             onClick={handleSave}
             disabled={!newScenario.situation ||
                      !newScenario.question ||
                      !newScenario.answer_options?.length ||
                      newScenario.answer_options.some(opt => opt.trim() === "")}
           >
-            Save Scenario
+            Save
           </Button>
         </div>
       </CardContent>

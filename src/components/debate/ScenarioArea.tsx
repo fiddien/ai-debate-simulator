@@ -37,21 +37,21 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
   }, [scenario]);
 
   const handleDebaterPositionChange = (debater: 'A' | 'B', answer: string) => {
-    const position = `The answer is ${answer}`;
     const updatedScenario = {
       ...editedScenario,
-      [`debater${debater}_position`]: position,
+      [`debater${debater}_position`]: answer,
     };
     setEditedScenario(updatedScenario);
     onScenarioChange?.(updatedScenario);
   };
 
   return (
-    <Card className="mb-6">
+    <Card>
       <CardHeader>
         <CardTitle>Debate Scenario</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        <h4 className="text-lg mb-4">Map the answer to the debaters' position</h4>
         {/* Scenario Details Section */}
         <div className="space-y-4">
           <div>
@@ -69,6 +69,15 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
               {scenario.question}
             </span>
           </div>
+
+          <div className="flex gap-2">
+            <span className="font-medium">Answer Options: </span>
+              {scenario.answer_options.map((option, i) => (
+                <Badge variant="outline">
+                  {String.fromCharCode(65 + i)}. {option}
+                </Badge>
+              ))}
+          </div>
         </div>
 
         {/* Debate Positions Section */}
@@ -80,7 +89,7 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
               <div className="flex items-center gap-2">
                 <span className="font-medium">Debater A:</span>
                 <Select
-                  value={editedScenario.debaterA_position?.split('The answer is ')[1] || ''}
+                  value={editedScenario.debaterA_position || ''}
                   onValueChange={(value) => handleDebaterPositionChange('A', value)}
                 >
                   <SelectTrigger>
@@ -95,11 +104,6 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
                   </SelectContent>
                 </Select>
               </div>
-              {editedScenario.debaterA_position && (
-                <div className="bg-teal-50 p-2 rounded">
-                  {editedScenario.debaterA_position}
-                </div>
-              )}
             </div>
 
             {/* Debater B Position */}
@@ -107,7 +111,7 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
               <div className="flex items-center gap-2">
                 <span className="font-medium">Debater B:</span>
                 <Select
-                  value={editedScenario.debaterB_position?.split('The answer is ')[1] || ''}
+                  value={editedScenario.debaterB_position || ''}
                   onValueChange={(value) => handleDebaterPositionChange('B', value)}
                 >
                   <SelectTrigger>
@@ -122,11 +126,6 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
                   </SelectContent>
                 </Select>
               </div>
-              {editedScenario.debaterB_position && (
-                <div className="bg-amber-50 p-2 rounded">
-                  {editedScenario.debaterB_position}
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -137,12 +136,12 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
           <div className="flex gap-4">
             {editedScenario.debaterA_position && (
               <Badge variant="outline">
-                A: {editedScenario.debaterA_position.split('The answer is ')[1]}
+                Debater A: {editedScenario.debaterA_position}
               </Badge>
             )}
             {editedScenario.debaterB_position && (
               <Badge variant="outline">
-                B: {editedScenario.debaterB_position.split('The answer is ')[1]}
+                Debater B: {editedScenario.debaterB_position}
               </Badge>
             )}
           </div>

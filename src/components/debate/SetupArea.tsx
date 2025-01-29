@@ -60,7 +60,7 @@ const SetupArea: React.FC<SetupAreaProps> = ({ onSetupComplete }) => {
     .flatMap((provider) => modelOptions[provider as keyof typeof modelOptions]);
 
   return (
-    <Card className="mb-6">
+    <Card>
       <CardHeader>
         <CardTitle>Setup Your LLMs</CardTitle>
       </CardHeader>

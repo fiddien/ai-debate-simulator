@@ -94,7 +94,7 @@ export default function JudgementArea({
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
-            <TabsTrigger value="judgement">Judgement</TabsTrigger>
+            <TabsTrigger value="judgement">{apiSetup.models.judge}</TabsTrigger>
             <TabsTrigger value="edit-prompts">Edit Prompts</TabsTrigger>
           </TabsList>
 
