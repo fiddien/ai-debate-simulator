@@ -106,7 +106,9 @@ export default function Home() {
     <ClientProvider>
       <MainLayout>
         <div className="max-w-4xl mx-auto">
-          <ProgressIndicator steps={steps} onStepClick={handleStepClick} />
+          <div className="flex justify-between items-center mb-4">
+            <ProgressIndicator steps={steps} onStepClick={handleStepClick} />
+          </div>
 
           <div id="setup">
             <SetupArea
@@ -152,12 +154,24 @@ export default function Home() {
 
           {currentScenario && (
             <>
+
             <div id="scenario">
               <ScenarioCard
                 scenario={currentScenario}
                 onScenarioChange={handleScenarioChange}
               />
             </div>
+
+            {/* Reset button */}
+            <div className="text-center mb-6">
+              <button
+                onClick={resetDebateState}
+                className="px-4 py-2 text-sm text-red-600 hover:text-red-700 border border-red-600 rounded-md hover:bg-red-50 transition-colors"
+              >
+                Clear All Messages
+              </button>
+            </div>
+
             <div id="baseline">
               <InitialResponseArea
                 messages={messages}
