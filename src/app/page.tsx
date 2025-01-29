@@ -13,7 +13,7 @@ import { defaultApiSetup } from "@/constants/setupConstantsTemp";
 import { ClientProvider } from "@/context/ClientContext";
 import { useDebate } from "@/context/DebateContext";
 import { getRandomScenario } from "@/lib/data";
-import { ApiSetup } from "@/types";
+import { ApiSetup, DebateScenario } from "@/types";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 

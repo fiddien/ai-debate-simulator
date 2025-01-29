@@ -73,7 +73,7 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
           <div className="flex gap-2">
             <span className="font-medium">Answer Options: </span>
               {scenario.answer_options.map((option, i) => (
-                <Badge variant="outline">
+                <Badge key={`answer-${i}`} variant="outline">
                   {String.fromCharCode(65 + i)}. {option}
                 </Badge>
               ))}

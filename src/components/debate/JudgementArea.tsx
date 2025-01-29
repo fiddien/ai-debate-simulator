@@ -94,8 +94,8 @@ export default function JudgementArea({
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
-            <TabsTrigger value="judgement">{apiSetup.models.judge}</TabsTrigger>
             <TabsTrigger value="edit-prompts">Edit Prompts</TabsTrigger>
+            <TabsTrigger value="judgement">{apiSetup.models.judge}</TabsTrigger>
           </TabsList>
 
           {error && (
@@ -113,10 +113,26 @@ export default function JudgementArea({
                   side="left"
                 />
               ) : (
-              <div className="flex items-center justify-center p-8 text-gray-500">
-                <p className="text-gray-500">No judgement generated yet.</p>
-              </div>
+                <div className="flex items-center justify-center p-8 text-gray-500">
+                  <p className="text-gray-500">No judgement generated yet.</p>
+                </div>
               )}
+            </div>
+            <div className="flex justify-center mt-4">
+              <Button
+                variant="default"
+                disabled={generatingJudgement || !debateMessages.length}
+                onClick={generateJudgement}
+              >
+                {generatingJudgement ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generating Judgement...
+                  </>
+                ) : (
+                  "Generate AI Judgement"
+                )}
+              </Button>
             </div>
           </TabsContent>
 
@@ -136,22 +152,6 @@ export default function JudgementArea({
           </TabsContent>
         </Tabs>
       </CardContent>
-      <CardFooter className="flex justify-center gap-2">
-        <Button
-          variant="default"
-          disabled={generatingJudgement || !debateMessages.length}
-          onClick={generateJudgement}
-        >
-          {generatingJudgement ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Generating Judgement...
-            </>
-          ) : (
-            "Generate AI Judgement"
-          )}
-        </Button>
-      </CardFooter>
     </Card>
   );
 }
