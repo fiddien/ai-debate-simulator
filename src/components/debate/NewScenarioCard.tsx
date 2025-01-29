@@ -46,11 +46,17 @@ export default function NewScenarioCard({ onSave }: NewScenarioCardProps) {
     }));
   };
 
+  const hasUniqueOptions = (options: string[]) => {
+    const uniqueOptions = new Set(options.map(opt => opt.trim().toLowerCase()));
+    return uniqueOptions.size === options.length;
+  };
+
   const handleSave = () => {
     if (newScenario.situation &&
         newScenario.question &&
         newScenario.answer_options?.length &&
-        newScenario.answer_options.every(opt => opt.trim() !== "")) {
+        newScenario.answer_options.every(opt => opt.trim() !== "") &&
+        hasUniqueOptions(newScenario.answer_options)) {
       onSave(newScenario as DebateScenario);
     }
   };
@@ -123,7 +129,8 @@ export default function NewScenarioCard({ onSave }: NewScenarioCardProps) {
             disabled={!newScenario.situation ||
                      !newScenario.question ||
                      !newScenario.answer_options?.length ||
-                     newScenario.answer_options.some(opt => opt.trim() === "")}
+                     newScenario.answer_options.some(opt => opt.trim() === "") ||
+                     !hasUniqueOptions(newScenario.answer_options)}
           >
             Save
           </Button>

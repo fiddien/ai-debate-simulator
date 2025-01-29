@@ -91,6 +91,15 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
           </div>
         </div>
 
+        {/* If label exist, show it */}
+        {scenario.label && (
+          <div className="flex gap-2">
+            <span className="font-medium">Ground Truth Answer: </span>
+            <Badge variant="outline">{scenario.label}</Badge>
+          </div>
+        )}
+
+
         {/* Debate Positions Section */}
         <div className="border-t pt-4">
           <h3 className="font-medium mb-4">Assign Debate Positions</h3>

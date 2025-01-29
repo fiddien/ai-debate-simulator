@@ -302,12 +302,6 @@ export default function DebateArea({
                         ))
                       ) : (
                         <div className="flex-row gap-2 p-8">
-                          <div className="flex items-center justify-center p-4 text-gray-500">
-                            <MessageSquare className="mr-2" />
-                            {round > currentRound
-                              ? "This round is not yet available"
-                              : "No messages in this round yet"}
-                          </div>
                           {currentRound <= DEBATE_CONFIG.MAX_ROUNDS && (
                             <div className="flex items-center justify-center">
                               <Button
