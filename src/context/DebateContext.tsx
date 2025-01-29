@@ -9,9 +9,7 @@ export function DebateProvider({ children }: { children: ReactNode }) {
   const [currentScenario, setCurrentScenario] = useState<DebateScenario | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [debateMessages, setDebateMessages] = useState<Message[]>([]);
-  const [debateUnsMessages, setDebateUnsMessages] = useState<Message[]>([]);
   const [judgement, setJudgement] = useState("");
-  const [isHumanJudge, setIsHumanJudge] = useState(true);
 
   return (
     <DebateContext.Provider
@@ -22,12 +20,8 @@ export function DebateProvider({ children }: { children: ReactNode }) {
         setMessages,
         debateMessages,
         setDebateMessages,
-        debateUnsMessages,
-        setDebateUnsMessages,
         judgement,
         setJudgement,
-        isHumanJudge,
-        setIsHumanJudge,
       }}
     >
       {children}

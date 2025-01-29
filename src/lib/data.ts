@@ -1,27 +1,32 @@
 import { DebateScenario } from "@/types";
 
 let scenarios: DebateScenario[] = [];
+let isLoading = true;
 
-// Initialize scenarios from JSON files in the folder
+// Initialize scenarios from JSON files in the public folder
 async function initializeScenarios() {
-  const context = require.context("../data/scenarios/", false, /\.json$/);
   try {
+    const response = await fetch('/scenarios/index.json');
+    const fileList = await response.json();
+
     scenarios = await Promise.all(
-      context.keys().map(async (key) => {
-        const data = await import(`../data/scenarios/${key.slice(2)}`);
-        return data as DebateScenario;
+      fileList.map(async (fileName: string) => {
+        const response = await fetch(`/scenarios/${fileName}`);
+        return await response.json() as DebateScenario;
       })
     );
+    isLoading = false;
   } catch (error) {
     console.warn("Failed to load scenarios data, using empty array:", error);
+    isLoading = false;
   }
 }
 
-// Initialize immediately
+// Initialize when this module is imported
 initializeScenarios();
 
 export const getScenarios = () => scenarios;
-export const isLoadingScenarios = () => false;
+export const isLoadingScenarios = () => isLoading;
 
 export interface ScenariosResult {
   scenarios: DebateScenario[];

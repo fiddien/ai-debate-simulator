@@ -84,21 +84,15 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
           <div className="flex gap-2">
             <span className="font-medium">Answer Options: </span>
               {scenario.answer_options.map((option, i) => (
-                <Badge key={`answer-${i}`} variant="outline">
+                <Badge
+                  key={`answer-${i}`}
+                  variant={scenario.label === option || scenario.label === option ? 'default' : 'outline'}
+                >
                   {String.fromCharCode(65 + i)}. {option}
                 </Badge>
               ))}
           </div>
         </div>
-
-        {/* If label exist, show it */}
-        {scenario.label && (
-          <div className="flex gap-2">
-            <span className="font-medium">Ground Truth Answer: </span>
-            <Badge variant="outline">{scenario.label}</Badge>
-          </div>
-        )}
-
 
         {/* Debate Positions Section */}
         <div className="border-t pt-4">
