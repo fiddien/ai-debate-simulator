@@ -1,3 +1,39 @@
+interface BasePrompt {
+  SYSTEM_PROMPT_BASELINE: string;
+  USER_PROMPT_BASELINE: string;
+}
+
+interface DebatePrompt {
+  SYSTEM_PROMPT: string;
+  USER_PROMPT_1: string;
+  ASSISTANT_PROMPT: string;
+  USER_PROMPT_2: string;
+  THINKING_ADVICE: Record<number, string>;
+  NEW_ARGUMENT_REQUEST: Record<number, string>;
+}
+
+interface JudgementPrompt {
+  SYSTEM_PROMPT_JUDGE: string;
+  USER_PROMPT_JUDGE: string;
+}
+
+// Main prompts interface
+interface Prompts {
+  BASELINE: BasePrompt;
+  DEBATE: DebatePrompt;
+  JUDGEMENT: JudgementPrompt;
+}
+
+// Configuration interface
+interface DebateConfig {
+  ROUNDS_PER_STAGE: number;
+  MAX_ROUNDS: number;
+  MIN_ROUNDS: number;
+  NUM_ROUNDS: number;
+  WORD_LIMIT: number;
+  PROMPTS: Prompts;
+}
+
 export const PROMPTS = {
   BASELINE: {
     SYSTEM_PROMPT_BASELINE: `You are an AI assistant that helps with logical reasoning questions based on a situation. Your task is to determine the correct answer based on the situation provided.
@@ -133,10 +169,10 @@ Think about your answer in <thinking></thinking> tags by carrying out these step
   },
 };
 
-export const DEBATE_CONFIG = {
+export const DEBATE_CONFIG: DebateConfig = {
   ROUNDS_PER_STAGE: 1,
   MAX_ROUNDS: 8,
-  Min_ROUNDS: 1,
+  MIN_ROUNDS: 1,
   NUM_ROUNDS: 3,
   WORD_LIMIT: 150,
   PROMPTS: PROMPTS,

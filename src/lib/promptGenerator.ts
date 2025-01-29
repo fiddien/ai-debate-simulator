@@ -11,12 +11,28 @@ What should I do?`;
   ]
 };
 
+export type DebateRound = keyof typeof DEBATE_CONFIG.PROMPTS.DEBATE.THINKING_ADVICE;
+export function isValidDebateRound(round: number): round is DebateRound {
+  return round in DEBATE_CONFIG.PROMPTS.DEBATE.THINKING_ADVICE;
+}
 // Function to get the opponent's answer, given the label and list of labels in answer_options
 // always get the label next to the label in the list
 const getOpponentAnswer = (label: string, answer_options: string[]): string => {
   const index = answer_options.indexOf(label);
   return answer_options[(index + 1) % answer_options.length];
 };
+
+export function getThinkingAdvice(round: number): string {
+  const maxRound = Object.keys(DEBATE_CONFIG.PROMPTS.DEBATE.THINKING_ADVICE).length;
+  const safeRound = Math.min(Math.max(1, round), maxRound);
+  return DEBATE_CONFIG.PROMPTS.DEBATE.THINKING_ADVICE[safeRound];
+}
+
+export function getNewArgumentRequest(round: number): string {
+  const maxRound = Object.keys(DEBATE_CONFIG.PROMPTS.DEBATE.NEW_ARGUMENT_REQUEST).length;
+  const safeRound = Math.min(Math.max(1, round), maxRound);
+  return DEBATE_CONFIG.PROMPTS.DEBATE.NEW_ARGUMENT_REQUEST[safeRound];
+}
 
 export const generateDebaterPrompt = (
   scenario: DebateScenario,
@@ -26,13 +42,6 @@ export const generateDebaterPrompt = (
 ): PromptMessage[] => {
   const transcript = formatDebateHistory(messages);
   const wordLimit = DEBATE_CONFIG.WORD_LIMIT;
-  const roundMax = Math.min(
-    Object.keys(DEBATE_CONFIG.PROMPTS.DEBATE.THINKING_ADVICE).length,
-    Object.keys(DEBATE_CONFIG.PROMPTS.DEBATE.NEW_ARGUMENT_REQUEST).length
-  );
-  if (round > roundMax) {
-    round = roundMax;
-  }
   const question = scenario.question;
   // Position A always defends the ground truth/label answer
   // Position B always defends the other answer
@@ -40,8 +49,8 @@ export const generateDebaterPrompt = (
   const opposingAnswer = getOpponentAnswer(scenario.label, scenario.answer_options);
   const yourAnswer = name === "A" ? defendingAnswer : opposingAnswer;
   const opponentAnswer = name === "A" ? opposingAnswer : defendingAnswer;
-  const thinkingInstruction = DEBATE_CONFIG.PROMPTS.DEBATE.THINKING_ADVICE[round];
-  const newArgumentRequest = DEBATE_CONFIG.PROMPTS.DEBATE.NEW_ARGUMENT_REQUEST[round]
+  const thinkingInstruction = getThinkingAdvice(round);
+  const newArgumentRequest = getNewArgumentRequest(round)
     .replace("{question}", question).replace("{answer_defending}", yourAnswer);
 
   const systemMessage = DEBATE_CONFIG.PROMPTS.DEBATE.SYSTEM_PROMPT
