@@ -67,7 +67,7 @@ jobs:
           path: |
             .next/cache
           # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx', '**/*.json') }}
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           # If source files changed but packages didn't, rebuild from a prior cache.
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
@@ -79,6 +79,18 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./out
+      - name: Verify scenarios JSON files
+        run: |
+          if [ ! -d "./out/scenarios" ]; then
+            echo "Scenarios directory not found in build output"
+            exit 1
+          fi
+          json_count=$(find "./out/scenarios" -name "*.json" | wc -l)
+          if [ "$json_count" -eq 0 ]; then
+            echo "No JSON files found in scenarios directory"
+            exit 1
+          fi
+          echo "Found $json_count JSON files in scenarios directory"
 
   # Deployment job
   deploy:
