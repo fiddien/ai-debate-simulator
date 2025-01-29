@@ -26,7 +26,6 @@ interface Prompts {
 
 // Configuration interface
 interface DebateConfig {
-  ROUNDS_PER_STAGE: number;
   MAX_ROUNDS: number;
   MIN_ROUNDS: number;
   NUM_ROUNDS: number;
@@ -170,7 +169,6 @@ Think about your answer in <thinking></thinking> tags by carrying out these step
 };
 
 export const DEBATE_CONFIG: DebateConfig = {
-  ROUNDS_PER_STAGE: 1,
   MAX_ROUNDS: 8,
   MIN_ROUNDS: 1,
   NUM_ROUNDS: 3,
