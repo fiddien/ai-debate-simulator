@@ -51,7 +51,7 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Debate Scenario</CardTitle>
+        <CardTitle>Debate Setup</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <h4 className="text-lg mb-4">Map the answer to the debaters' position</h4>

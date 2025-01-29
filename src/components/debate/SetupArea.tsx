@@ -62,9 +62,25 @@ const SetupArea: React.FC<SetupAreaProps> = ({ onSetupComplete }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Setup Your LLMs</CardTitle>
+        <CardTitle>Model Setup</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        <div className="mb-6 p-4 bg-teal-50 border border-teal-200 rounded-md">
+          <div className="flex items-start space-x-3">
+            <div className="flex-shrink-0 mt-0.5">
+              <svg className="h-5 w-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="font-medium text-teal-800">Security Notice</h3>
+              <p className="mt-1 text-sm text-teal-700">
+                Your API keys are processed entirely on your browser and are never sent to our servers.
+                This application runs client-side to ensure your credentials remain secure.
+              </p>
+            </div>
+          </div>
+        </div>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col md:flex-row md:space-x-6">
             {/* Input API Keys */}
