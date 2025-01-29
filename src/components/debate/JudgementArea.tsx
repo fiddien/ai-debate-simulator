@@ -114,25 +114,24 @@ export default function JudgementArea({
                 />
               ) : (
                 <div className="flex items-center justify-center p-8 text-gray-500">
-                  <p className="text-gray-500">No judgement generated yet.</p>
+                  <div className="flex justify-center mt-4">
+                    <Button
+                      variant="default"
+                      disabled={generatingJudgement || !debateMessages.length}
+                      onClick={generateJudgement}
+                    >
+                      {generatingJudgement ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Generating Judgement...
+                        </>
+                      ) : (
+                        "Generate Judgement"
+                      )}
+                    </Button>
+                  </div>
                 </div>
               )}
-            </div>
-            <div className="flex justify-center mt-4">
-              <Button
-                variant="default"
-                disabled={generatingJudgement || !debateMessages.length}
-                onClick={generateJudgement}
-              >
-                {generatingJudgement ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating Judgement...
-                  </>
-                ) : (
-                  "Generate AI Judgement"
-                )}
-              </Button>
             </div>
           </TabsContent>
 

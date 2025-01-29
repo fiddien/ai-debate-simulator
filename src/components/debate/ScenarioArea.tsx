@@ -32,11 +32,19 @@ const highlightText = (text: string) => {
 };
 
 export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCardProps) {
-  const [editedScenario, setEditedScenario] = useState(scenario);
+  const [editedScenario, setEditedScenario] = useState(() => ({
+    ...scenario,
+    debaterA_position: scenario.debaterA_position || scenario.answer_options[0],
+    debaterB_position: scenario.debaterB_position || scenario.answer_options[1],
+  }));
 
-  // Update when scenario changes
+  // Update when scenario changes, preserving existing positions if possible
   useEffect(() => {
-    setEditedScenario(scenario);
+    setEditedScenario(prev => ({
+      ...scenario,
+      debaterA_position: scenario.debaterA_position || prev.debaterA_position || scenario.answer_options[0],
+      debaterB_position: scenario.debaterB_position || prev.debaterB_position || scenario.answer_options[1],
+    }));
   }, [scenario]);
 
   const handleDebaterPositionChange = (debater: Debater, answer: string) => {

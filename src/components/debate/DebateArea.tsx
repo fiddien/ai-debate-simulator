@@ -48,14 +48,21 @@ export default function DebateArea({
     latestMessagesRef.current = messages;
   }, [messages]);
 
-  // Add effect to reset state when scenario changes
+  // Update effect to reset state when scenario changes
   useEffect(() => {
+    setCurrentScenario({ ...debateScenario });
+    setMessages([]); // Clear messages
     setCurrentRound(1);
     setActiveTab("overview");
     setIsGenerating(false);
     setMaxRounds(DEBATE_CONFIG.NUM_ROUNDS);
-    setMessages([]); // Clear messages
   }, [debateScenario, setMessages]); // Add debateScenario as dependency
+
+  useEffect(() => {
+    if (messages.length === 0) {
+      setCurrentRound(1);
+    }
+  }, [messages]);
 
   const scrollToTop = () => {
     cardRef.current?.scrollIntoView({ behavior: "smooth" });
