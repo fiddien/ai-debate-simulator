@@ -81,6 +81,9 @@ const SetupArea: React.FC<SetupAreaProps> = ({ onSetupComplete }) => {
             </div>
           </div>
         </div>
+
+        Do you know that you can get a free access to Gemini models? <a href="https://aistudio.google.com/apikey" target="__blank"><Button variant="default" size="sm" className="ml-2">Get API Key</Button></a>
+
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col md:flex-row md:space-x-6">
             {/* Input API Keys */}
