@@ -144,7 +144,6 @@ class LLMClientManager {
             throw new Error("Gemini client not initialized");
           const geminiModel = this.geminiClient.getGenerativeModel({ model });
           // Gemini expects messages concatenated into a single string
-          console.log(`[DEBUG] Messages: ${messages}`);
           const geminiPrompt = messages
             .map((m) => `${m.role}: ${m.content}`)
             .join("\n");

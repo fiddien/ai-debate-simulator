@@ -52,7 +52,7 @@ export interface Scenario {
     level: string;
 
     isEditing?: boolean;
-    debaterA_position?: string;  // Add these new fields
+    debaterA_position?: string;
     debaterB_position?: string;
   }
 

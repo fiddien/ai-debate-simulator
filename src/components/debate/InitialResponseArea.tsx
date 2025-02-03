@@ -137,7 +137,7 @@ export default function InitialResponseArea({
         <CardTitle>Initial AI Responses</CardTitle>
       </CardHeader>
       <CardContent>
-        <h4 className="text-lg mb-4">Get <i>normal</i> AI responses from selected models using the baseline prompt</h4>
+        <p className="mb-4">Get <i>normal</i> AI responses from selected models using the baseline prompt</p>
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}

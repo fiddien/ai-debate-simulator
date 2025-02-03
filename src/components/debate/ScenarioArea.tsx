@@ -62,7 +62,12 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
         <CardTitle>Debate Setup</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <h4 className="text-lg mb-4">Map the answer to the debaters' position</h4>
+        <p className="text-sm text-muted-foreground">
+          Select which position each debater will argue for.
+
+          The positions come from the available answer options.
+        </p>
+
         {/* Scenario Details Section */}
         <div className="space-y-4">
           <div>

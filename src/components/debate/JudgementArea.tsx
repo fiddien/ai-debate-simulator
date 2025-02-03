@@ -92,6 +92,7 @@ export default function JudgementArea({
         <CardTitle>AI as Judge</CardTitle>
       </CardHeader>
       <CardContent>
+        <p className="mb-4">The judge model will evaluate the debate arguments and determine which position is better supported by the evidence.</p>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="edit-prompts">Edit Prompts</TabsTrigger>

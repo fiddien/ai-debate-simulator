@@ -18,7 +18,7 @@ export default function NewScenarioCard({ onSave }: NewScenarioCardProps) {
     situation: "",
     question: "",
     level: "basic",
-    label: "unknown",
+    label: "",
     answer_options: ["", ""],
     id: Date.now().toString(),
   });

@@ -43,12 +43,11 @@ export const generateDebaterPrompt = (
   const transcript = formatDebateHistory(messages);
   const wordLimit = DEBATE_CONFIG.WORD_LIMIT;
   const question = scenario.question;
-  // Position A always defends the ground truth/label answer
-  // Position B always defends the other answer
-  const defendingAnswer = scenario.label;
-  const opposingAnswer = getOpponentAnswer(scenario.label, scenario.answer_options);
-  const yourAnswer = name === "A" ? defendingAnswer : opposingAnswer;
-  const opponentAnswer = name === "A" ? opposingAnswer : defendingAnswer;
+  if (!scenario.debaterA_position || !scenario.debaterB_position) {
+    throw new Error("Debater positions not set");
+  }
+  const yourAnswer = name === "A" ? scenario.debaterA_position : scenario.debaterB_position;;
+  const opponentAnswer = name === "A" ? scenario.debaterB_position : scenario.debaterA_position;
   const thinkingInstruction = getThinkingAdvice(round);
   const newArgumentRequest = getNewArgumentRequest(round)
     .replace("{question}", question).replace("{answer_defending}", yourAnswer);
@@ -70,12 +69,6 @@ export const generateDebaterPrompt = (
     .replace("{transcript}", transcript)
     .replace("{new_argument_request}", newArgumentRequest)
     .replace("{thinking_advice}", thinkingInstruction);
-
-  const position = name === "A" ? scenario.debaterA_position : scenario.debaterB_position;
-  const prompt = `${systemMessage}
-${position ? `Your position/argument is: ${position}` : ""}
-${scenario.situation}
-${transcript}`;
 
   return [
     { "role": "system", "content": systemMessage.trim() },

@@ -63,7 +63,6 @@ export default function DebateArea({
       setCurrentRound(1);
     }
   }, [messages]);
-
   const scrollToTop = () => {
     cardRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -247,8 +246,9 @@ export default function DebateArea({
           <CardTitle>AI Debate</CardTitle>
         </CardHeader>
         <CardContent>
+          <p className="mb-4">Models will take opposing positions and engage in structured debate, supporting their arguments with quotes from the scenario.</p>
           <div className="flex mb-6 items-center gap-4 mt-4">
-            <span className="text-sm">Max Rounds:</span>
+            <span>Max Rounds:</span>
             <Slider
               defaultValue={[maxRounds.toString()]}
               min={1}
@@ -286,7 +286,7 @@ export default function DebateArea({
               <div className="p-4 border rounded-lg bg-gray-50">
                 <OverviewTab
                   items={getOverviewItems()}
-                  emptyMessage="Start the structured debate by running Round 1"
+                  emptyMessage="Start the debate by running Round 1"
                 />
               </div>
             </TabsContent>
