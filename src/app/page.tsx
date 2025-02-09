@@ -130,6 +130,7 @@ export default function Home() {
   const handleScenarioChange = (updatedScenario: DebateScenario) => {
     setCurrentScenario(updatedScenario);
     resetDebateState();
+    console.log("Scenario updated:", updatedScenario);
   };
 
   return (

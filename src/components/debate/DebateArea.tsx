@@ -20,7 +20,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import { Loader2, MessageSquare } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import RenderPromptInput from "./RenderPromptInput";
-import ScenarioCard from "./ScenarioArea";
 
 const getRoundName = (round: number) => {
   return `Round ${round}`;
@@ -103,6 +102,7 @@ export default function DebateArea({
     const currentMessages = latestMessagesRef.current;
     console.log("Generating response for", name, "using model", model, "using latest messages", currentMessages);
 
+    console.log("Current scenario:", currentScenario);
     const prompt = generateDebaterPrompt(
       currentScenario,
       currentMessages,
