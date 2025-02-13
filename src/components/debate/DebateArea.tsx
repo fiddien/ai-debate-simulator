@@ -84,12 +84,17 @@ export default function DebateArea({
     return apiSetup.models.debaterA && apiSetup.models.debaterB;
   };
 
+  const hasPositionsAssigned = () => {
+    return currentScenario.debaterA_position && currentScenario.debaterB_position;
+  };
+
   const canRunRound = () => {
     return (
       isPreviousRoundComplete() &&
       !isRoundComplete(currentRound) &&
       !isGenerating &&
       hasModelsAssigned() &&
+      hasPositionsAssigned() &&  // Add this check
       currentRound <= maxRounds
     );
   };

@@ -38,6 +38,17 @@ export default function ScenarioCard({ scenario, onScenarioChange }: ScenarioCar
     debaterB_position: scenario.debaterB_position || scenario.answer_options[1],
   }));
 
+  // Initialize with default assignments and trigger callback
+  useEffect(() => {
+    const defaultScenario = {
+      ...scenario,
+      debaterA_position: scenario.answer_options[0],
+      debaterB_position: scenario.answer_options[1],
+    };
+    setEditedScenario(defaultScenario);
+    onScenarioChange?.(defaultScenario);
+  }, [scenario.id]); // Only run when scenario ID changes
+
   // Update when scenario changes, preserving existing positions if possible
   useEffect(() => {
     setEditedScenario(prev => ({
